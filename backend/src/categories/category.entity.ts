@@ -4,11 +4,11 @@ import { Color } from './color.enum';
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ type: 'enum', enum: Color })
-  color: Color;
+  color!: Color;
 }

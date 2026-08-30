@@ -4,8 +4,8 @@ import { Color } from '../color.enum';
 export class CreateCategoryDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @IsEnum(Color)
-  color: Color;
+  color!: Color;
 }
