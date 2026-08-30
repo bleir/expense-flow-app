@@ -1,47 +1,27 @@
 # Expense Flow
 
-Monorepo z frontendem Next.js i backendem NestJS, orkiestracją zadań przez Turborepo.
+Expense Flow is an **MVP in active development**. The app is not finished and the feature set will change as the project evolves.
 
-## Struktura
+This repository is a pnpm monorepo with a Next.js frontend, a NestJS API, and Turborepo for running tasks across both apps.
 
-- `frontend` — aplikacja Next.js
-- `backend` — API NestJS
+## Structure
 
-## Uruchomienie
+- `frontend` — Next.js app
+- `backend` — NestJS API
 
-```bash
-pnpm install
-pnpm dev
-```
-
-`pnpm dev` odpala obie aplikacje równolegle przez Turborepo.
-
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend: [http://localhost:3001](http://localhost:3001)
-
-Osobno:
-
-```bash
-pnpm dev:frontend
-pnpm dev:backend
-```
-
-## Struktura
-
-- `frontend` — aplikacja Next.js
-- `backend` — API NestJS
-
-## Uruchomienie
+## Getting started
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
+`pnpm dev` starts both apps in parallel via Turborepo.
+
 - Frontend: [http://localhost:3000](http://localhost:3000)
 - Backend: [http://localhost:3001](http://localhost:3001)
 
-Osobno:
+Run them separately:
 
 ```bash
 pnpm dev:frontend
