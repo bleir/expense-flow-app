@@ -1,13 +1,14 @@
-import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
+import { CreateCategoryDto } from './dto/create-categories.dto';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  createCategory() {
-    return this.categoriesService.createCategory();
+  createCategory(@Body() createCategoryDto: CreateCategoryDto) {
+    return this.categoriesService.createCategory(createCategoryDto);
   }
 
   @Get()
@@ -16,7 +17,7 @@ export class CategoriesController {
   }
 
   @Get(':id')
-  getCategory(@Param('id', ParseIntPipe) id: number) {
+  getCategory(@Param('id') id: string) {
     return this.categoriesService.getCategory(id);
   }
 }
