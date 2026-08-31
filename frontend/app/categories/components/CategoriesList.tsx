@@ -1,8 +1,9 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { TrashIcon } from "lucide-react";
 
+import EditCategoryDialog from "./EditCategoryDialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -84,9 +85,7 @@ export default function CategoriesList() {
               <CardTitle>{category.name}</CardTitle>
             </div>
             <CardAction className="flex gap-1">
-              <Button variant="ghost" size="icon-sm" aria-label="Edit category">
-                <PencilIcon />
-              </Button>
+              <EditCategoryDialog category={category} />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button

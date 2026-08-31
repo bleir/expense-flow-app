@@ -31,6 +31,8 @@ export interface CreateCategoryDto {
   color: Color;
 }
 
+export type UpdateCategoryDto = Partial<CreateCategoryDto>;
+
 export const categoriesApi = {
   getAll: async (): Promise<Category[]> => {
     const { data } = await apiClient.get<Category[]>("/categories");
@@ -40,6 +42,17 @@ export const categoriesApi = {
   create: async (categoryData: CreateCategoryDto): Promise<Category> => {
     const { data } = await apiClient.post<Category>(
       "/categories",
+      categoryData,
+    );
+    return data;
+  },
+
+  update: async (
+    id: string,
+    categoryData: UpdateCategoryDto,
+  ): Promise<Category> => {
+    const { data } = await apiClient.patch<Category>(
+      `/categories/${id}`,
       categoryData,
     );
     return data;

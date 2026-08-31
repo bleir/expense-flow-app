@@ -22,7 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoriesApi, type CreateCategoryDto } from "@/lib/api";
+import {
+  categoriesApi,
+  type Category,
+  type CreateCategoryDto,
+} from "@/lib/api";
 
 const categoryFormSchema = z.object({
   name: z
@@ -37,29 +41,37 @@ const categoryFormSchema = z.object({
 type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 
 type CategoryFormProps = {
+  category?: Category;
   showHeader?: boolean;
   onSuccess?: () => void;
 };
 
 export default function CategoryForm({
+  category,
   showHeader = true,
   onSuccess,
 }: CategoryFormProps) {
   const queryClient = useQueryClient();
+  const isEditing = Boolean(category);
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
-      name: "",
-      color: undefined,
+      name: category?.name ?? "",
+      color: category?.color,
     },
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CreateCategoryDto) => categoriesApi.create(data),
+    mutationFn: (data: CreateCategoryDto) =>
+      isEditing
+        ? categoriesApi.update(category!.id, data)
+        : categoriesApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      form.reset();
+      if (!isEditing) {
+        form.reset();
+      }
       onSuccess?.();
     },
   });
@@ -72,9 +84,13 @@ export default function CategoryForm({
     <div className="w-full space-y-4">
       {showHeader && (
         <div>
-          <h2 className="text-2xl font-bold">Create Category</h2>
+          <h2 className="text-2xl font-bold">
+            {isEditing ? "Edit Category" : "Create Category"}
+          </h2>
           <p className="text-muted-foreground">
-            Add a new category for your expenses
+            {isEditing
+              ? "Update this category name or color"
+              : "Add a new category for your expenses"}
           </p>
         </div>
       )}
@@ -107,7 +123,7 @@ export default function CategoryForm({
                 <FormLabel>Color</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                   disabled={mutation.isPending}
                 >
                   <FormControl>
@@ -158,7 +174,13 @@ export default function CategoryForm({
             disabled={mutation.isPending}
             className="w-full bg-sky-600 text-white hover:bg-sky-700"
           >
-            {mutation.isPending ? "Creating..." : "Create Category"}
+            {mutation.isPending
+              ? isEditing
+                ? "Saving..."
+                : "Creating..."
+              : isEditing
+                ? "Save changes"
+                : "Create Category"}
           </Button>
         </form>
       </Form>
