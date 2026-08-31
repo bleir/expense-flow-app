@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/card";
 import { categoriesApi, type Color } from "@/lib/api";
 import { toast } from "sonner";
-// import { Toaster } from "@/components/ui/sonner";
+import { Progress } from "@/components/ui/progress";
 
 const colorMap: Record<Color, string> = {
   yellow: "#eab308",
@@ -81,12 +81,18 @@ export default function CategoriesList() {
         return (
           <Card key={category.id}>
             <CardHeader>
-              <div className="flex items-center gap-2">
-                <div
-                  className="h-3 w-3 shrink-0 rounded-full"
-                  style={{ backgroundColor: colorMap[category.color] }}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-3 w-3 shrink-0 rounded-full"
+                    style={{ backgroundColor: colorMap[category.color] }}
+                  />
+                  <CardTitle className="text-sm">{category.name}</CardTitle>
+                </div>
+                <Progress
+                  value={23}
+                  className="bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
                 />
-                <CardTitle className="text-sm">{category.name}</CardTitle>
               </div>
               <CardAction className="flex gap-1">
                 <EditCategoryDialog category={category} />
