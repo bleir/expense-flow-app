@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import Header from "@/components/Header";
 import { Providers } from "./providers";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Providers>
           <Header />
           {children}
+          <Toaster />
         </Providers>
       </body>
     </html>

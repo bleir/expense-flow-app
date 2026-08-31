@@ -27,6 +27,7 @@ import {
   type Category,
   type CreateCategoryDto,
 } from "@/lib/api";
+import { toast } from "sonner";
 
 const categoryFormSchema = z.object({
   name: z
@@ -73,6 +74,7 @@ export default function CategoryForm({
         form.reset();
       }
       onSuccess?.();
+      toast.success(`Category has been ${isEditing ? "updated" : "created"}`);
     },
   });
 

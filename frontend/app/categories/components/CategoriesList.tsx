@@ -24,6 +24,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { categoriesApi, type Color } from "@/lib/api";
+import { toast } from "sonner";
+// import { Toaster } from "@/components/ui/sonner";
 
 const colorMap: Record<Color, string> = {
   yellow: "#eab308",
@@ -48,6 +50,7 @@ export default function CategoriesList() {
     mutationFn: (id: string) => categoriesApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      toast.success("Category has been deleted");
     },
   });
 
