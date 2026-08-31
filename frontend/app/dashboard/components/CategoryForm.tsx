@@ -36,7 +36,15 @@ const categoryFormSchema = z.object({
 
 type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 
-export default function CategoryForm() {
+type CategoryFormProps = {
+  showHeader?: boolean;
+  onSuccess?: () => void;
+};
+
+export default function CategoryForm({
+  showHeader = true,
+  onSuccess,
+}: CategoryFormProps) {
   const queryClient = useQueryClient();
 
   const form = useForm<CategoryFormValues>({
@@ -52,6 +60,7 @@ export default function CategoryForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       form.reset();
+      onSuccess?.();
     },
   });
 
@@ -60,13 +69,15 @@ export default function CategoryForm() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-4">
-      <div>
-        <h2 className="text-2xl font-bold">Create Category</h2>
-        <p className="text-muted-foreground">
-          Add a new category for your expenses
-        </p>
-      </div>
+    <div className="w-full space-y-4">
+      {showHeader && (
+        <div>
+          <h2 className="text-2xl font-bold">Create Category</h2>
+          <p className="text-muted-foreground">
+            Add a new category for your expenses
+          </p>
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -142,13 +153,11 @@ export default function CategoryForm() {
             </div>
           )}
 
-          {mutation.isSuccess && (
-            <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-700 dark:text-green-400">
-              Category created successfully!
-            </div>
-          )}
-
-          <Button type="submit" disabled={mutation.isPending} className="w-full">
+          <Button
+            type="submit"
+            disabled={mutation.isPending}
+            className="w-full bg-sky-600 text-white hover:bg-sky-700"
+          >
             {mutation.isPending ? "Creating..." : "Create Category"}
           </Button>
         </form>

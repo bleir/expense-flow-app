@@ -44,4 +44,8 @@ export const categoriesApi = {
     );
     return data;
   },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/categories/${id}`);
+  },
 };
