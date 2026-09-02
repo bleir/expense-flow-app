@@ -2,7 +2,7 @@ import { HeadingProps } from "@/types";
 
 export default function Heading({ title, children }: HeadingProps) {
   return (
-    <section>
+    <section className="mb-6">
       <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
       <p className="text-muted-foreground">{children}</p>
     </section>

@@ -4,7 +4,7 @@ import NewCategoryDialog from "./components/NewCategoryDialog";
 
 export default function CategoriesPage() {
   return (
-    <main className="space-y-8 p-6">
+    <main className="p-6">
       <section className="flex justify-between">
         <Heading title="Categories & budgets">
           Monthly budgets, this month's pace.
