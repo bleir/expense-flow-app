@@ -1,21 +1,9 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { TrashIcon } from "lucide-react";
 
 import EditCategoryDialog from "./EditCategoryDialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import {
   Card,
   CardAction,
@@ -23,9 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { categoriesApi, type Color } from "@/lib/api";
-import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+import { categoriesApi, type Color } from "@/lib/categoriesApi";
+import { toast } from "sonner";
 
 const colorMap: Record<Color, string> = {
   yellow: "#eab308",
@@ -96,37 +84,13 @@ export default function CategoriesList() {
               </div>
               <CardAction className="flex gap-1">
                 <EditCategoryDialog category={category} />
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label="Delete category"
-                      className="text-destructive hover:text-destructive"
-                      disabled={deleteMutation.isPending}
-                    >
-                      <TrashIcon />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete category</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this category?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        variant="destructive"
-                        disabled={deleteMutation.isPending}
-                        onClick={() => deleteMutation.mutate(category.id)}
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <ConfirmDeleteDialog
+                  title="Delete category"
+                  description="Are you sure you want to delete this category?"
+                  ariaLabel="Delete category"
+                  isPending={deleteMutation.isPending}
+                  onConfirm={() => deleteMutation.mutate(category.id)}
+                />
               </CardAction>
             </CardHeader>
           </Card>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { routes } from "@/constants";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -35,13 +36,13 @@ export type UpdateCategoryDto = Partial<CreateCategoryDto>;
 
 export const categoriesApi = {
   getAll: async (): Promise<Category[]> => {
-    const { data } = await apiClient.get<Category[]>("/categories");
+    const { data } = await apiClient.get<Category[]>(routes.categories);
     return data;
   },
 
   create: async (categoryData: CreateCategoryDto): Promise<Category> => {
     const { data } = await apiClient.post<Category>(
-      "/categories",
+      routes.categories,
       categoryData,
     );
     return data;
@@ -52,13 +53,13 @@ export const categoriesApi = {
     categoryData: UpdateCategoryDto,
   ): Promise<Category> => {
     const { data } = await apiClient.patch<Category>(
-      `/categories/${id}`,
+      `${routes.categories}/${id}`,
       categoryData,
     );
     return data;
   },
 
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/categories/${id}`);
+    await apiClient.delete(`${routes.categories}/${id}`);
   },
 };

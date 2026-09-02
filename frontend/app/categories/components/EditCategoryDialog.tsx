@@ -1,19 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { PencilIcon } from "lucide-react";
 
-import CategoryForm from "@/app/dashboard/components/CategoryForm";
+import CategoryForm from "@/app/categories/components/CategoryForm";
+import FormDialog from "@/components/FormDialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import type { Category } from "@/lib/api";
+import type { Category } from "@/lib/categoriesApi";
 
 type EditCategoryDialogProps = {
   category: Category;
@@ -22,29 +14,24 @@ type EditCategoryDialogProps = {
 export default function EditCategoryDialog({
   category,
 }: EditCategoryDialogProps) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <FormDialog
+      title="Edit category"
+      description="Update the name or color of this category."
+      trigger={
         <Button variant="ghost" size="icon-sm" aria-label="Edit category">
           <PencilIcon />
         </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit category</DialogTitle>
-          <DialogDescription>
-            Update the name or color of this category.
-          </DialogDescription>
-        </DialogHeader>
+      }
+    >
+      {({ onSuccess }) => (
         <CategoryForm
           key={category.id}
           category={category}
           showHeader={false}
-          onSuccess={() => setOpen(false)}
+          onSuccess={onSuccess}
         />
-      </DialogContent>
-    </Dialog>
+      )}
+    </FormDialog>
   );
 }

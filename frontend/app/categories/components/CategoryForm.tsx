@@ -1,13 +1,9 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
+import EntityForm from "@/components/EntityForm";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -26,8 +22,7 @@ import {
   categoriesApi,
   type Category,
   type CreateCategoryDto,
-} from "@/lib/api";
-import { toast } from "sonner";
+} from "@/lib/categoriesApi";
 
 const categoryFormSchema = z.object({
   name: z
@@ -52,55 +47,38 @@ export default function CategoryForm({
   showHeader = true,
   onSuccess,
 }: CategoryFormProps) {
-  const queryClient = useQueryClient();
   const isEditing = Boolean(category);
 
-  const form = useForm<CategoryFormValues>({
-    resolver: zodResolver(categoryFormSchema),
-    defaultValues: {
-      name: category?.name ?? "",
-      color: category?.color,
-    },
-  });
-
-  const mutation = useMutation({
-    mutationFn: (data: CreateCategoryDto) =>
-      isEditing
-        ? categoriesApi.update(category!.id, data)
-        : categoriesApi.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      if (!isEditing) {
-        form.reset();
-      }
-      onSuccess?.();
-      toast.success(`Category has been ${isEditing ? "updated" : "created"}`);
-    },
-  });
-
-  const onSubmit = (data: CategoryFormValues) => {
-    mutation.mutate(data);
-  };
-
   return (
-    <div className="w-full space-y-4">
-      {showHeader && (
-        <div>
-          <h2 className="text-2xl font-bold">
-            {isEditing ? "Edit Category" : "Create Category"}
-          </h2>
-          <p className="text-muted-foreground">
-            {isEditing
-              ? "Update this category name or color"
-              : "Add a new category for your expenses"}
-          </p>
-        </div>
-      )}
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <EntityForm<CategoryFormValues>
+      schema={categoryFormSchema}
+      defaultValues={{
+        name: category?.name ?? "",
+        color: category?.color,
+      }}
+      mutationFn={(data: CreateCategoryDto) =>
+        isEditing
+          ? categoriesApi.update(category!.id, data)
+          : categoriesApi.create(data)
+      }
+      queryKey={["categories"]}
+      isEditing={isEditing}
+      entityName="Category"
+      showHeader={showHeader}
+      titles={{
+        create: "Create Category",
+        edit: "Edit Category",
+      }}
+      descriptions={{
+        create: "Add a new category for your expenses",
+        edit: "Update this category name or color",
+      }}
+      onSuccess={onSuccess}
+    >
+      {({ control, isPending }) => (
+        <>
           <FormField
-            control={form.control}
+            control={control}
             name="name"
             render={({ field }) => (
               <FormItem>
@@ -109,7 +87,7 @@ export default function CategoryForm({
                   <Input
                     placeholder="e.g., Groceries"
                     {...field}
-                    disabled={mutation.isPending}
+                    disabled={isPending}
                   />
                 </FormControl>
                 <FormMessage />
@@ -118,7 +96,7 @@ export default function CategoryForm({
           />
 
           <FormField
-            control={form.control}
+            control={control}
             name="color"
             render={({ field }) => (
               <FormItem>
@@ -126,7 +104,7 @@ export default function CategoryForm({
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
-                  disabled={mutation.isPending}
+                  disabled={isPending}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -164,28 +142,8 @@ export default function CategoryForm({
               </FormItem>
             )}
           />
-
-          {mutation.isError && (
-            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-              Error: {mutation.error.message}
-            </div>
-          )}
-
-          <Button
-            type="submit"
-            disabled={mutation.isPending}
-            className="w-full bg-sky-600 text-white hover:bg-sky-700"
-          >
-            {mutation.isPending
-              ? isEditing
-                ? "Saving..."
-                : "Creating..."
-              : isEditing
-                ? "Save changes"
-                : "Create Category"}
-          </Button>
-        </form>
-      </Form>
-    </div>
+        </>
+      )}
+    </EntityForm>
   );
 }
