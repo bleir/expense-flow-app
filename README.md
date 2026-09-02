@@ -4,6 +4,8 @@ Expense Flow is an **MVP in active development**. The app is not finished and th
 
 This repository is a pnpm monorepo with a Next.js frontend, a NestJS API, and Turborepo for running tasks across both apps.
 
+Live demo: https://bleir.github.io/expense-flow-app/
+
 ## Structure
 
 - `frontend` — Next.js app
