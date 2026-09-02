@@ -27,3 +27,17 @@ Run them separately:
 pnpm dev:frontend
 pnpm dev:backend
 ```
+
+## GitHub Pages
+
+The **frontend** is deployed to GitHub Pages as a static site:
+
+**https://bleir.github.io/expense-flow-app/**
+
+GitHub Pages cannot host the NestJS API. Point the frontend at a deployed backend with a repository secret:
+
+1. Repo **Settings → Secrets and variables → Actions**
+2. Add `NEXT_PUBLIC_API_URL` (e.g. `https://your-api.example.com`)
+3. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**
+
+The workflow in `.github/workflows/deploy-github-pages.yml` publishes on every push to `master`.

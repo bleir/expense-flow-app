@@ -1,5 +1,18 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function HomePage() {
-  redirect("/dashboard");
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/dashboard");
+  }, [router]);
+
+  return (
+    <main className="p-6">
+      <p className="text-muted-foreground">Redirecting to dashboard…</p>
+    </main>
+  );
 }
