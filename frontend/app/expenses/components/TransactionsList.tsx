@@ -15,6 +15,12 @@ import { useDefaultCurrency } from "@/lib/defaultCurrency";
 import { toast } from "sonner";
 import { BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const renderTransactionIcon = (transactionType: TransactionType) => {
   return transactionType === "income" ? (
@@ -22,6 +28,23 @@ const renderTransactionIcon = (transactionType: TransactionType) => {
   ) : (
     <BanknoteArrowDown color="red" />
   );
+};
+
+const formatTransactionDate = (date: Date | string) => {
+  const parsed =
+    typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)
+      ? new Date(`${date}T00:00:00`)
+      : new Date(date);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return "—";
+  }
+
+  return parsed.toLocaleDateString(navigator.language, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 };
 
 export default function TransactionsList() {
@@ -72,46 +95,63 @@ export default function TransactionsList() {
       <Card className="gap-0 divide-y py-0">
         {transactions.map((transaction) => {
           return (
-            <div
-              key={transaction.id}
-              className="flex items-center justify-between px-4 py-3"
-            >
-              <span className="flex flex-row gap-2">
-                {renderTransactionIcon(transaction.type)}
+            <Accordion key={transaction.id} type="multiple">
+              <AccordionItem value={transaction.id}>
+                <AccordionTrigger className="items-center hover:no-underline px-6 cursor-pointer">
+                  <span className="flex flex-1 items-center gap-2">
+                    {renderTransactionIcon(transaction.type)}
+                    {transaction.description}
+                  </span>
 
-                <CardTitle className="text-sm">
-                  {transaction.description}
-                </CardTitle>
-              </span>
-
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    "text-sm font-semibold tabular-nums",
-                    transaction.type === "income"
-                      ? "text-green-600"
-                      : "text-black",
-                  )}
-                >
-                  {Number(transaction.amount).toLocaleString(
-                    navigator.language,
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    },
-                  )}{" "}
-                  {currencySymbol}
-                </span>
-                <EditTransactionDialog transaction={transaction} />
-                <ConfirmDeleteDialog
-                  title="Delete transaction"
-                  description="Are you sure you want to delete this transaction?"
-                  ariaLabel="Delete transaction"
-                  isPending={deleteMutation.isPending}
-                  onConfirm={() => deleteMutation.mutate(transaction.id)}
-                />
-              </div>
-            </div>
+                  <div
+                    className="flex shrink-0 items-center gap-2"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <span
+                      className={cn(
+                        "text-base font-bold tabular-nums",
+                        transaction.type === "income"
+                          ? "text-green-600"
+                          : "text-black",
+                      )}
+                    >
+                      {Number(transaction.amount).toLocaleString(
+                        navigator.language,
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        },
+                      )}{" "}
+                      {currencySymbol}
+                    </span>
+                    <EditTransactionDialog transaction={transaction} />
+                    <ConfirmDeleteDialog
+                      title="Delete transaction"
+                      description="Are you sure you want to delete this transaction?"
+                      ariaLabel="Delete transaction"
+                      isPending={deleteMutation.isPending}
+                      onConfirm={() => deleteMutation.mutate(transaction.id)}
+                    />
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="grid grid-cols-2 gap-4 px-8">
+                  <div className="min-w-0">
+                    <p className="text-gray-500 text-sm pb-1">Date</p>
+                    <p className="text-base">
+                      {formatTransactionDate(transaction.date)}
+                    </p>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-gray-500 text-sm pb-1">Type</p>
+                    <p className="text-base">{transaction.type}</p>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-gray-500 text-sm pb-1">Notes</p>
+                    <p className="text-base">{transaction.notes || "-"}</p>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           );
         })}
       </Card>
