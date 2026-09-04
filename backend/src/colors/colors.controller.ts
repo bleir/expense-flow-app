@@ -31,7 +31,7 @@ export class ColorsController {
   }
 
   @Patch(':id')
-  async updateColor(@Param('id') id: string, updateColorDto: UpdateColorDto) {
+  updateColor(@Param('id') id: string, @Body() updateColorDto: UpdateColorDto) {
     return this.colorsService.updateColor(id, updateColorDto);
   }
 
