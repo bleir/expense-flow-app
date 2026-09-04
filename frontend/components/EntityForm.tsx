@@ -32,6 +32,7 @@ type EntityFormProps<TValues extends FieldValues> = {
     edit: string;
   };
   onSuccess?: () => void;
+  submitLabel?: string;
   children: (helpers: {
     control: Control<TValues>;
     isPending: boolean;
@@ -49,6 +50,7 @@ export default function EntityForm<TValues extends FieldValues>({
   titles,
   descriptions,
   onSuccess,
+  submitLabel,
   children,
 }: EntityFormProps<TValues>) {
   const queryClient = useQueryClient();
@@ -104,15 +106,14 @@ export default function EntityForm<TValues extends FieldValues>({
           <Button
             type="submit"
             disabled={mutation.isPending}
-            className="w-full bg-sky-600 text-white hover:bg-sky-700"
+            className="bg-sky-600 text-white hover:bg-sky-700"
           >
             {mutation.isPending
               ? isEditing
                 ? "Saving..."
                 : "Creating..."
-              : isEditing
-                ? "Save changes"
-                : `Create ${entityName}`}
+              : (submitLabel ??
+                (isEditing ? "Save changes" : `Create ${entityName}`))}
           </Button>
         </form>
       </Form>

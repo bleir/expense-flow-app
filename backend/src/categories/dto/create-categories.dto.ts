@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Color } from '../color.enum';
 
 export class CreateCategoryDto {
@@ -8,4 +8,8 @@ export class CreateCategoryDto {
 
   @IsEnum(Color)
   color!: Color;
+
+  @IsString()
+  @IsOptional()
+  monthlyBudget?: string | null;
 }

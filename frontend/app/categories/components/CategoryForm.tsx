@@ -32,6 +32,7 @@ const categoryFormSchema = z.object({
   color: z.enum(["yellow", "blue", "green", "gray"], {
     required_error: "Please select a color",
   }),
+  monthlyBudget: z.string().optional(),
 });
 
 type CategoryFormValues = z.infer<typeof categoryFormSchema>;
@@ -55,6 +56,7 @@ export default function CategoryForm({
       defaultValues={{
         name: category?.name ?? "",
         color: category?.color,
+        monthlyBudget: category?.monthlyBudget ?? "",
       }}
       mutationFn={(data: CreateCategoryDto) =>
         isEditing
@@ -138,6 +140,20 @@ export default function CategoryForm({
                     </SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="monthlyBudget"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Monthly budget</FormLabel>
+                <FormControl>
+                  <Input placeholder="250" {...field} disabled={isPending} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

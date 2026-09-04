@@ -10,16 +10,13 @@ import {
 
 export default function ColorSettings() {
   return (
-    <Card>
-      <CardHeader>
+    <div>
+      <div>
         <CardTitle>Color</CardTitle>
         <CardDescription>Set up colors for your categories</CardDescription>
         <CardAction></CardAction>
-      </CardHeader>
-      <CardContent>content goes here</CardContent>
-      <CardFooter>
-        <p>this is footer</p>
-      </CardFooter>
-    </Card>
+      </div>
+      <div>content goes here</div>
+    </div>
   );
 }

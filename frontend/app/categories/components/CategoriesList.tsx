@@ -7,6 +7,7 @@ import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import {
   Card,
   CardAction,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -14,6 +15,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { categoriesApi, type Color } from "@/lib/categoriesApi";
 import { toast } from "sonner";
+import { useDefaultCurrency } from "@/lib/defaultCurrency";
 
 const colorMap: Record<Color, string> = {
   yellow: "#eab308",
@@ -24,6 +26,7 @@ const colorMap: Record<Color, string> = {
 
 export default function CategoriesList() {
   const queryClient = useQueryClient();
+  const { currency } = useDefaultCurrency();
 
   const {
     data: categories,
@@ -69,18 +72,12 @@ export default function CategoriesList() {
         return (
           <Card key={category.id}>
             <CardHeader>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="h-3 w-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: colorMap[category.color] }}
-                  />
-                  <CardTitle className="text-sm">{category.name}</CardTitle>
-                </div>
-                <Progress
-                  value={23}
-                  className="bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
+              <div className="flex items-center gap-2">
+                <div
+                  className="h-3 w-3 shrink-0 rounded-full"
+                  style={{ backgroundColor: colorMap[category.color] }}
                 />
+                <CardTitle className="text-sm">{category.name}</CardTitle>
               </div>
               <CardAction className="flex gap-1">
                 <EditCategoryDialog category={category} />
@@ -93,6 +90,20 @@ export default function CategoriesList() {
                 />
               </CardAction>
             </CardHeader>
+            {category.monthlyBudget && (
+              <CardContent className="w-full space-y-2 mt-2">
+                <Progress
+                  value={Number(category.monthlyBudget)}
+                  className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
+                />
+                <div className="flex w-full justify-between text-xs text-muted-foreground">
+                  <span>{`0,00 ${currency?.symbol} spent`}</span>
+                  <span>
+                    {`of ${category.monthlyBudget} ${currency?.symbol}`}
+                  </span>
+                </div>
+              </CardContent>
+            )}
           </Card>
         );
       })}

@@ -25,11 +25,13 @@ export interface Category {
   id: string;
   name: string;
   color: Color;
+  monthlyBudget?: string | null;
 }
 
 export interface CreateCategoryDto {
   name: string;
   color: Color;
+  monthlyBudget?: string | null;
 }
 
 export type UpdateCategoryDto = Partial<CreateCategoryDto>;

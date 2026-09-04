@@ -1,12 +1,14 @@
 "use client";
 
 import Heading from "@/components/Heading";
+import { useDefaultCurrency } from "@/lib/defaultCurrency";
 import { transactionsApi } from "@/lib/transactionsApi";
 import { useQuery } from "@tanstack/react-query";
 import NewTransactionDialog from "./components/NewTransactionDialog";
 import TransactionsList from "./components/TransactionsList";
 
 export default function ExpensesPage() {
+  const { currency } = useDefaultCurrency();
   const {
     data: transactions,
     isLoading,
@@ -31,12 +33,17 @@ export default function ExpensesPage() {
     0,
   );
   const count = transactions?.length ?? 0;
+  const currencySymbol = currency?.symbol ?? "$";
+  const formattedTotal = totalAmount.toLocaleString(navigator.language, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
   return (
     <main className="p-6">
       <section className="flex justify-between">
         <Heading title="Expenses">
-          {`${count} transaction${count === 1 ? "" : "s"} · $${totalAmount.toLocaleString(navigator.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          {`${count} transaction${count === 1 ? "" : "s"} · ${currencySymbol}${formattedTotal}`}
         </Heading>
         <NewTransactionDialog />
       </section>

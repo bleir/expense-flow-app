@@ -11,4 +11,7 @@ export class Category {
 
   @Column({ type: 'enum', enum: Color })
   color!: Color;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
+  monthlyBudget?: string | null;
 }

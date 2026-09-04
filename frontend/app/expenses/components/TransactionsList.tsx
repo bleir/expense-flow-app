@@ -11,10 +11,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { transactionsApi } from "@/lib/transactionsApi";
+import { useDefaultCurrency } from "@/lib/defaultCurrency";
 import { toast } from "sonner";
 
 export default function TransactionsList() {
   const queryClient = useQueryClient();
+  const { currency } = useDefaultCurrency();
+  const currencySymbol = currency?.symbol ?? "$";
 
   const {
     data: transactions,
@@ -68,7 +71,7 @@ export default function TransactionsList() {
               </CardTitle>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold tabular-nums">
-                  $
+                  {currencySymbol}
                   {Number(transaction.amount).toLocaleString(
                     navigator.language,
                     {
