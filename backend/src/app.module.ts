@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CurrenciesModule } from './currencies/currencies.module';
+import { ColorsModule } from './colors/colors.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CurrenciesModule } from './currencies/currencies.module';
     CategoriesModule,
     TransactionsModule,
     CurrenciesModule,
+    ColorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
