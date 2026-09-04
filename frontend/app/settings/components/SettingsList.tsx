@@ -25,7 +25,9 @@ export default function SettingsList() {
           <CardContent>
             <Accordion type="multiple">
               <AccordionItem value={section.name}>
-                <AccordionTrigger>{section.label}</AccordionTrigger>
+                <AccordionTrigger className="cursor-pointer hover:no-underline">
+                  {section.label}
+                </AccordionTrigger>
                 <AccordionContent>{section.component}</AccordionContent>
               </AccordionItem>
             </Accordion>

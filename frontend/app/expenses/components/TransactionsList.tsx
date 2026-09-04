@@ -10,9 +10,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { transactionsApi } from "@/lib/transactionsApi";
+import { transactionsApi, TransactionType } from "@/lib/transactionsApi";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
 import { toast } from "sonner";
+import { BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const renderTransactionIcon = (transactionType: TransactionType) => {
+  return transactionType === "income" ? (
+    <BanknoteArrowUp color="green" />
+  ) : (
+    <BanknoteArrowDown color="red" />
+  );
+};
 
 export default function TransactionsList() {
   const queryClient = useQueryClient();
@@ -66,19 +76,31 @@ export default function TransactionsList() {
               key={transaction.id}
               className="flex items-center justify-between px-4 py-3"
             >
-              <CardTitle className="text-sm">
-                {transaction.description}
-              </CardTitle>
+              <span className="flex flex-row gap-2">
+                {renderTransactionIcon(transaction.type)}
+
+                <CardTitle className="text-sm">
+                  {transaction.description}
+                </CardTitle>
+              </span>
+
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold tabular-nums">
-                  {currencySymbol}
+                <span
+                  className={cn(
+                    "text-sm font-semibold tabular-nums",
+                    transaction.type === "income"
+                      ? "text-green-600"
+                      : "text-black",
+                  )}
+                >
                   {Number(transaction.amount).toLocaleString(
                     navigator.language,
                     {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     },
-                  )}
+                  )}{" "}
+                  {currencySymbol}
                 </span>
                 <EditTransactionDialog transaction={transaction} />
                 <ConfirmDeleteDialog
