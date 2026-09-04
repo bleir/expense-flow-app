@@ -19,18 +19,16 @@ apiClient.interceptors.response.use(
   },
 );
 
-export type Color = "yellow" | "blue" | "green" | "gray";
-
 export interface Category {
   id: string;
   name: string;
-  color: Color;
+  color: string;
   monthlyBudget?: string | null;
 }
 
 export interface CreateCategoryDto {
   name: string;
-  color: Color;
+  color: string;
   monthlyBudget?: string | null;
 }
 

@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
-import ColorSettings from "./ColorSettings";
-import CurrenciesSettings from "./CurrenciesSettings";
+import ColorSettings from "./Colors/ColorSettings";
+import CurrenciesSettings from "./Currencies/CurrenciesSettings";
 import {
   Accordion,
   AccordionContent,

@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Color } from './color.enum';
 
 @Entity()
 export class Category {
@@ -9,8 +8,8 @@ export class Category {
   @Column()
   name!: string;
 
-  @Column({ type: 'enum', enum: Color })
-  color!: Color;
+  @Column({ default: '#6b7280' })
+  color!: string;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
   monthlyBudget?: string | null;

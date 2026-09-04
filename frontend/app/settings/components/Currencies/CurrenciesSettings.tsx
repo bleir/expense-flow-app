@@ -4,14 +4,7 @@ import { toast } from "sonner";
 
 import CurrenciesList from "./CurrenciesList";
 import NewCurrencyDialog from "./NewCurrencyDialog";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardAction, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -36,14 +29,16 @@ export default function CurrenciesSettings() {
 
   return (
     <>
-      <div>
-        <CardTitle>Currencies</CardTitle>
-        <CardDescription>Set up your favourite currencies</CardDescription>
+      <div className="flex justify-between">
+        <span>
+          <CardDescription>Set up your favourite currencies</CardDescription>
+        </span>
+
         <CardAction>
           <NewCurrencyDialog />
         </CardAction>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6 mt-4">
         <div className="space-y-2">
           <Label htmlFor="default-currency">Default currency</Label>
           <Select

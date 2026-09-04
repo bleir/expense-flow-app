@@ -1,14 +1,16 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Color } from '../color.enum';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   name!: string;
 
-  @IsEnum(Color)
-  color!: Color;
+  @IsString()
+  @IsNotEmpty()
+  color!: string;
 
+  @Transform(({ value }) => (value === '' ? null : value))
   @IsString()
   @IsOptional()
   monthlyBudget?: string | null;

@@ -5,9 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import EditCurrencyDialog from "./EditCurrencyDialog";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { currenciesApi } from "@/lib/currenciesApi";
-import {
-  DEFAULT_CURRENCY_STORAGE_KEY,
-} from "@/lib/defaultCurrency";
+import { DEFAULT_CURRENCY_STORAGE_KEY } from "@/lib/defaultCurrency";
 import { toast } from "sonner";
 
 export default function CurrenciesList() {
@@ -42,9 +40,7 @@ export default function CurrenciesList() {
   }
 
   if (!currencies?.length) {
-    return (
-      <p className="text-sm text-muted-foreground">No currencies yet.</p>
-    );
+    return <p className="text-sm text-muted-foreground">No currencies yet.</p>;
   }
 
   return (

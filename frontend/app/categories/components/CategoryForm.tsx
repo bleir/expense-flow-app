@@ -23,15 +23,15 @@ import {
   type Category,
   type CreateCategoryDto,
 } from "@/lib/categoriesApi";
+import { useQuery } from "@tanstack/react-query";
+import { colorsApi } from "@/lib/colorsApi";
 
 const categoryFormSchema = z.object({
   name: z
     .string()
     .min(2, "Name must be at least 2 characters")
     .max(50, "Name must be less than 50 characters"),
-  color: z.enum(["yellow", "blue", "green", "gray"], {
-    required_error: "Please select a color",
-  }),
+  color: z.string().min(1, "Please select a color"),
   monthlyBudget: z.string().optional(),
 });
 
@@ -50,19 +50,35 @@ export default function CategoryForm({
 }: CategoryFormProps) {
   const isEditing = Boolean(category);
 
+  const {
+    data: colors,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryFn: colorsApi.getAll,
+    queryKey: ["colors"],
+  });
+
   return (
     <EntityForm<CategoryFormValues>
       schema={categoryFormSchema}
       defaultValues={{
         name: category?.name ?? "",
-        color: category?.color,
+        color: category?.color ?? "",
         monthlyBudget: category?.monthlyBudget ?? "",
       }}
-      mutationFn={(data: CreateCategoryDto) =>
-        isEditing
-          ? categoriesApi.update(category!.id, data)
-          : categoriesApi.create(data)
-      }
+      mutationFn={(data: CreateCategoryDto) => {
+        const payload: CreateCategoryDto = {
+          ...data,
+          monthlyBudget: data.monthlyBudget?.trim()
+            ? data.monthlyBudget
+            : null,
+        };
+
+        return isEditing
+          ? categoriesApi.update(category!.id, payload)
+          : categoriesApi.create(payload);
+      }}
       queryKey={["categories"]}
       isEditing={isEditing}
       entityName="Category"
@@ -105,39 +121,26 @@ export default function CategoryForm({
                 <FormLabel>Color</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  value={field.value}
+                  value={field.value || undefined}
                   disabled={isPending}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a color" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="yellow">
-                      <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 rounded-full bg-yellow-500" />
-                        Yellow
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="blue">
-                      <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 rounded-full bg-blue-500" />
-                        Blue
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="green">
-                      <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 rounded-full bg-green-500" />
-                        Green
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="gray">
-                      <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 rounded-full bg-gray-500" />
-                        Gray
-                      </div>
-                    </SelectItem>
+                    {colors?.map((color) => (
+                      <SelectItem key={color.id} value={color.color}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="h-4 w-4 rounded-full border border-neutral-500"
+                            style={{ backgroundColor: color.color }}
+                          />
+                          {color.name}
+                        </div>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -150,7 +153,7 @@ export default function CategoryForm({
             name="monthlyBudget"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Monthly budget</FormLabel>
+                <FormLabel>Monthly budget limit</FormLabel>
                 <FormControl>
                   <Input placeholder="250" {...field} disabled={isPending} />
                 </FormControl>

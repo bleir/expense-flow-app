@@ -13,16 +13,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { categoriesApi, type Color } from "@/lib/categoriesApi";
+import { categoriesApi } from "@/lib/categoriesApi";
 import { toast } from "sonner";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
-
-const colorMap: Record<Color, string> = {
-  yellow: "#eab308",
-  blue: "#3b82f6",
-  green: "#22c55e",
-  gray: "#6b7280",
-};
 
 export default function CategoriesList() {
   const queryClient = useQueryClient();
@@ -74,8 +67,8 @@ export default function CategoriesList() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <div
-                  className="h-3 w-3 shrink-0 rounded-full"
-                  style={{ backgroundColor: colorMap[category.color] }}
+                  className="h-5 w-5 shrink-0 rounded-full"
+                  style={{ backgroundColor: category.color }}
                 />
                 <CardTitle className="text-sm">{category.name}</CardTitle>
               </div>
