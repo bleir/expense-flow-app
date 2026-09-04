@@ -63,7 +63,7 @@ export default function CategoriesList() {
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => {
         return (
-          <Card key={category.id}>
+          <Card key={category.id} className="gap-1">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <div
@@ -83,20 +83,32 @@ export default function CategoriesList() {
                 />
               </CardAction>
             </CardHeader>
-            {category.monthlyBudget && (
-              <CardContent className="w-full space-y-2 mt-2">
-                <Progress
-                  value={Number(category.monthlyBudget)}
-                  className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
-                />
-                <div className="flex w-full justify-between text-xs text-muted-foreground">
-                  <span>{`0,00 ${currency?.symbol} spent`}</span>
-                  <span>
-                    {`of ${category.monthlyBudget} ${currency?.symbol}`}
-                  </span>
-                </div>
-              </CardContent>
-            )}
+            <CardContent className="w-full space-y-2 mt-2">
+              {category.monthlyBudget ? (
+                <>
+                  <Progress
+                    value={Number(category.monthlyBudget)}
+                    className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
+                  />
+                  <div className="flex w-full justify-between text-xs text-muted-foreground">
+                    <span>{`0,00 ${currency?.symbol} spent`}</span>
+                    <span>
+                      {`of ${category.monthlyBudget} ${currency?.symbol}`}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Progress
+                    value={0}
+                    className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
+                  />
+                  <div className="flex w-full justify-between text-xs text-muted-foreground">
+                    <span>Budget not set</span>
+                  </div>
+                </>
+              )}
+            </CardContent>
           </Card>
         );
       })}

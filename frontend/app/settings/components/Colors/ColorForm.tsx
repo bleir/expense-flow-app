@@ -13,9 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { colorsApi, type CreateColorDto, type Color } from "@/lib/colorsApi";
 
+const DEFAULT_COLOR = "#808080";
+
 const colorFormSchema = z.object({
   name: z.string(),
-  color: z.string(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Pick a valid color"),
 });
 
 type ColorFormValues = z.infer<typeof colorFormSchema>;
@@ -40,7 +42,7 @@ export default function ColorForm({
       schema={colorFormSchema}
       defaultValues={{
         name: color?.name ?? "",
-        color: color?.color ?? "",
+        color: color?.color ?? DEFAULT_COLOR,
       }}
       mutationFn={(data) => {
         const payload: CreateColorDto = {
@@ -93,11 +95,21 @@ export default function ColorForm({
               <FormItem>
                 <FormLabel>Color</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="#f3f3f3"
-                    {...field}
-                    disabled={isPending}
-                  />
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      className="h-9 w-12 cursor-pointer rounded-md border border-input bg-transparent p-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      value={field.value || DEFAULT_COLOR}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      disabled={isPending}
+                    />
+                    <span className="font-mono text-sm uppercase text-muted-foreground">
+                      {field.value || DEFAULT_COLOR}
+                    </span>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
