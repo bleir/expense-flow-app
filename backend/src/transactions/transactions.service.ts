@@ -22,9 +22,11 @@ export class TransactionsService {
     return this.transactionsRepository.save(transaction);
   }
 
-  getAllTransactions() {
+  getAllTransactions(limit?: number) {
     return this.transactionsRepository.find({
       relations: { category: true },
+      order: { date: 'DESC', createdAt: 'DESC' },
+      take: limit,
     });
   }
 

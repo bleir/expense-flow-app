@@ -21,6 +21,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const renderTransactionIcon = (transactionType: TransactionType) => {
   return transactionType === "income" ? (
@@ -47,7 +49,11 @@ const formatTransactionDate = (date: Date | string) => {
   });
 };
 
-export default function TransactionsList() {
+export default function TransactionsList({
+  dashboardView,
+}: {
+  dashboardView?: boolean;
+}) {
   const queryClient = useQueryClient();
   const { currency } = useDefaultCurrency();
   const currencySymbol = currency?.symbol ?? "$";
@@ -57,8 +63,9 @@ export default function TransactionsList() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: transactionsApi.getAll,
+    queryKey: ["transactions", { limit: dashboardView ? 10 : undefined }],
+    queryFn: () =>
+      transactionsApi.getAll(dashboardView ? { limit: 10 } : undefined),
   });
 
   const deleteMutation = useMutation({
@@ -92,6 +99,14 @@ export default function TransactionsList() {
 
   return (
     <div className="mt-4 flex flex-col gap-4">
+      {dashboardView && (
+        <div className="flex items-center justify-between">
+          <h2>Lastest transaction</h2>
+          <Button asChild variant="secondary" className="hover:bg-sky-200">
+            <Link href="/expenses">See all</Link>
+          </Button>
+        </div>
+      )}
       <Card className="gap-0 divide-y py-0">
         {transactions.map((transaction) => {
           return (

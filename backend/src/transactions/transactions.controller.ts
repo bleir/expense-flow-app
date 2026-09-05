@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -21,8 +22,12 @@ export class TransactionsController {
   }
 
   @Get()
-  getAllTransactions() {
-    return this.transactionsService.getAllTransactions();
+  getAllTransactions(@Query('limit') limit?: string) {
+    const parsedLimit = limit ? Number(limit) : undefined;
+
+    return this.transactionsService.getAllTransactions(
+      parsedLimit && Number.isFinite(parsedLimit) ? parsedLimit : undefined,
+    );
   }
 
   @Get(':id')

@@ -50,8 +50,10 @@ export interface CreateTransactionDto {
 export type UpdateTransactionDto = Partial<CreateTransactionDto>;
 
 export const transactionsApi = {
-  getAll: async (): Promise<Transaction[]> => {
-    const { data } = await apiClient.get<Transaction[]>(routes.transactions);
+  getAll: async (params?: { limit?: number }): Promise<Transaction[]> => {
+    const { data } = await apiClient.get<Transaction[]>(routes.transactions, {
+      params,
+    });
     return data;
   },
 
