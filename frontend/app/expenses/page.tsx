@@ -15,7 +15,7 @@ export default function ExpensesPage() {
     isError,
   } = useQuery({
     queryKey: ["transactions"],
-    queryFn: transactionsApi.getAll,
+    queryFn: () => transactionsApi.getAll(),
   });
 
   if (isLoading) {
