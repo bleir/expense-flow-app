@@ -18,6 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { categoriesApi } from "@/lib/categoriesApi";
 import {
   transactionsApi,
   type CreateTransactionDto,
@@ -25,6 +27,7 @@ import {
 } from "@/lib/transactionsApi";
 
 const transactionFormSchema = z.object({
+  categoryId: z.string().min(1, "Please select a category"),
   type: z.enum(["income", "expense"], {
     required_error: "Please select a type",
   }),
@@ -59,11 +62,16 @@ export default function TransactionForm({
   onSuccess,
 }: TransactionFormProps) {
   const isEditing = Boolean(transaction);
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: categoriesApi.getAll,
+  });
 
   return (
     <EntityForm<TransactionFormValues>
       schema={transactionFormSchema}
       defaultValues={{
+        categoryId: transaction?.categoryId ?? transaction?.category?.id ?? "",
         type: (transaction?.type as TransactionFormValues["type"]) ?? "expense",
         amount: transaction?.amount ?? "",
         description: transaction?.description ?? "",
@@ -110,6 +118,41 @@ export default function TransactionForm({
                   <SelectContent>
                     <SelectItem value="expense">Expense</SelectItem>
                     <SelectItem value="income">Income</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || undefined}
+                  disabled={isPending || isLoadingCategories}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {categories?.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="h-4 w-4 rounded-full border border-neutral-500"
+                            style={{ backgroundColor: category.color }}
+                          />
+                          {category.name}
+                        </div>
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />

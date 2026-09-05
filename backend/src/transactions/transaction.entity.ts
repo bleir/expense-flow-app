@@ -2,15 +2,25 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TransactionType } from './transaction.enum';
+import { Category } from 'src/categories/category.entity';
 
 @Entity()
 export class Transaction {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
+
+  @ManyToOne(() => Category, (category) => category.transactions, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'category_id' })
+  category!: Category;
 
   @Column({ type: 'enum', enum: TransactionType })
   type!: TransactionType;

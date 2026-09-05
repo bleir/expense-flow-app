@@ -97,16 +97,12 @@ export default function TransactionsList() {
           return (
             <Accordion key={transaction.id} type="multiple">
               <AccordionItem value={transaction.id}>
-                <AccordionTrigger className="items-center hover:no-underline px-6 cursor-pointer">
-                  <span className="flex flex-1 items-center gap-2">
-                    {renderTransactionIcon(transaction.type)}
-                    {transaction.description}
-                  </span>
-
-                  <div
-                    className="flex shrink-0 items-center gap-2"
-                    onClick={(event) => event.stopPropagation()}
-                  >
+                <div className="flex items-center gap-2 px-6">
+                  <AccordionTrigger className="items-center hover:no-underline cursor-pointer">
+                    <span className="flex flex-1 items-center gap-2">
+                      {renderTransactionIcon(transaction.type)}
+                      {transaction.description}
+                    </span>
                     <span
                       className={cn(
                         "text-base font-bold tabular-nums",
@@ -124,6 +120,8 @@ export default function TransactionsList() {
                       )}{" "}
                       {currencySymbol}
                     </span>
+                  </AccordionTrigger>
+                  <div className="flex shrink-0 items-center">
                     <EditTransactionDialog transaction={transaction} />
                     <ConfirmDeleteDialog
                       title="Delete transaction"
@@ -133,12 +131,24 @@ export default function TransactionsList() {
                       onConfirm={() => deleteMutation.mutate(transaction.id)}
                     />
                   </div>
-                </AccordionTrigger>
+                </div>
                 <AccordionContent className="grid grid-cols-2 gap-4 px-8">
                   <div className="min-w-0">
                     <p className="text-gray-500 text-sm pb-1">Date</p>
                     <p className="text-base">
                       {formatTransactionDate(transaction.date)}
+                    </p>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-gray-500 text-sm pb-1">Category</p>
+                    <p className="text-base flex flex-row gap-2 items-center">
+                      <span
+                        className="w-5 h-5 rounded-full block"
+                        style={{
+                          backgroundColor: transaction?.category?.color,
+                        }}
+                      />
+                      {transaction.category?.name ?? "-"}
                     </p>
                   </div>
                   <div className="min-w-0">

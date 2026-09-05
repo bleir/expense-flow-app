@@ -21,8 +21,16 @@ apiClient.interceptors.response.use(
 
 export type TransactionType = "income" | "expense";
 
+export interface TransactionCategory {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export interface Transaction {
   id: string;
+  categoryId?: string;
+  category?: TransactionCategory;
   type: TransactionType;
   amount: string;
   description: string;
@@ -31,6 +39,7 @@ export interface Transaction {
 }
 
 export interface CreateTransactionDto {
+  categoryId: string;
   type: TransactionType;
   amount: string;
   description: string;

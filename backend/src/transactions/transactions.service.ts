@@ -13,18 +13,26 @@ export class TransactionsService {
   ) {}
 
   createTransaction(createTransactionDto: CreateTransactionDto) {
-    const transaction =
-      this.transactionsRepository.create(createTransactionDto);
+    const { categoryId, ...rest } = createTransactionDto;
+    const transaction = this.transactionsRepository.create({
+      ...rest,
+      category: { id: categoryId },
+    });
 
     return this.transactionsRepository.save(transaction);
   }
 
   getAllTransactions() {
-    return this.transactionsRepository.find();
+    return this.transactionsRepository.find({
+      relations: { category: true },
+    });
   }
 
   getTransaction(id: string) {
-    return this.transactionsRepository.findOneBy({ id });
+    return this.transactionsRepository.findOne({
+      where: { id },
+      relations: { category: true },
+    });
   }
 
   async updateTransaction(
@@ -37,10 +45,13 @@ export class TransactionsService {
       throw new NotFoundException('Transaction not found');
     }
 
-    const updated = this.transactionsRepository.merge(
-      transaction,
-      updateTransactionDto,
-    );
+    const { categoryId, ...rest } = updateTransactionDto;
+    const updated = this.transactionsRepository.merge(transaction, rest);
+
+    if (categoryId) {
+      updated.category = { id: categoryId } as Transaction['category'];
+    }
+
     return this.transactionsRepository.save(updated);
   }
 

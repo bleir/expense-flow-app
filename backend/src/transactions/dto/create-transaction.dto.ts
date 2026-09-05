@@ -4,10 +4,15 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import { TransactionType } from '../transaction.enum';
 
 export class CreateTransactionDto {
+  @IsUUID()
+  @IsNotEmpty()
+  categoryId!: string;
+
   @IsEnum(TransactionType)
   @IsNotEmpty()
   type!: TransactionType;
