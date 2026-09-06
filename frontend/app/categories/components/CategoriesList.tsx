@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import EditCategoryDialog from "./EditCategoryDialog";
@@ -16,6 +17,54 @@ import { Progress } from "@/components/ui/progress";
 import { categoriesApi } from "@/lib/categoriesApi";
 import { toast } from "sonner";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
+import { Transaction, transactionsApi } from "@/lib/transactionsApi";
+import { cn } from "@/lib/utils";
+
+function isInCurrentMonth(date: Date | string) {
+  const parsed =
+    typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)
+      ? new Date(`${date}T00:00:00`)
+      : new Date(date);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+  return (
+    parsed.getFullYear() === now.getFullYear() &&
+    parsed.getMonth() === now.getMonth()
+  );
+}
+
+function getSpentByCategory(transactions: Transaction[] | undefined) {
+  const totals = new Map<string, number>();
+
+  for (const transaction of transactions ?? []) {
+    if (transaction.type !== "expense" || !isInCurrentMonth(transaction.date)) {
+      continue;
+    }
+
+    const categoryId = transaction.categoryId ?? transaction.category?.id;
+    if (!categoryId) {
+      continue;
+    }
+
+    totals.set(
+      categoryId,
+      (totals.get(categoryId) ?? 0) + Number(transaction.amount),
+    );
+  }
+
+  return totals;
+}
+
+function formatAmount(amount: number) {
+  return amount.toLocaleString(navigator.language, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
 
 export default function CategoriesList() {
   const queryClient = useQueryClient();
@@ -30,6 +79,15 @@ export default function CategoriesList() {
     queryFn: categoriesApi.getAll,
   });
 
+  const {
+    data: transactions,
+    isLoading: isLoadingTransactions,
+    isError: isErrorTransactions,
+  } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: () => transactionsApi.getAll(),
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => categoriesApi.delete(id),
     onSuccess: () => {
@@ -38,11 +96,37 @@ export default function CategoriesList() {
     },
   });
 
-  if (isLoading) {
+  const spentByCategory = useMemo(
+    () => getSpentByCategory(transactions),
+    [transactions],
+  );
+  const [showProgress, setShowProgress] = useState(false);
+  const isReady = !isLoading && !isLoadingTransactions && !!categories?.length;
+
+  useEffect(() => {
+    if (!isReady) {
+      setShowProgress(false);
+      return;
+    }
+
+    let innerFrame = 0;
+    const outerFrame = requestAnimationFrame(() => {
+      innerFrame = requestAnimationFrame(() => {
+        setShowProgress(true);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(outerFrame);
+      cancelAnimationFrame(innerFrame);
+    };
+  }, [isReady]);
+
+  if (isLoading || isLoadingTransactions) {
     return <p className="text-muted-foreground">Loading categories...</p>;
   }
 
-  if (isError) {
+  if (isError || isErrorTransactions) {
     return <p className="text-destructive">Failed to load categories.</p>;
   }
 
@@ -61,7 +145,14 @@ export default function CategoriesList() {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {categories.map((category) => {
+      {categories.map((category, index) => {
+        const spent = spentByCategory.get(category.id) ?? 0;
+        const budget = Number(category.monthlyBudget);
+        const isOverBudget = budget > 0 && spent > budget;
+        const progress =
+          budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
+        const animatedProgress = showProgress ? progress : 0;
+
         return (
           <Card key={category.id} className="gap-1">
             <CardHeader>
@@ -87,13 +178,20 @@ export default function CategoriesList() {
               {category.monthlyBudget ? (
                 <>
                   <Progress
-                    value={Number(category.monthlyBudget)}
-                    className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
+                    value={animatedProgress}
+                    style={{ transitionDelay: `${index * 50}ms` }}
+                    className={cn(
+                      "w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500",
+                      isOverBudget &&
+                        "bg-stone-200 [&_[data-slot=progress-indicator]]:bg-rose-800",
+                    )}
                   />
                   <div className="flex w-full justify-between text-xs text-muted-foreground">
-                    <span>{`0,00 ${currency?.symbol} spent`}</span>
+                    <span
+                      className={cn(isOverBudget && "font-medium text-rose-800")}
+                    >{`${formatAmount(spent)} ${currency?.symbol} spent`}</span>
                     <span>
-                      {`of ${category.monthlyBudget} ${currency?.symbol}`}
+                      {`of ${formatAmount(budget)} ${currency?.symbol}`}
                     </span>
                   </div>
                 </>

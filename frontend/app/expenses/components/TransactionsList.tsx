@@ -13,7 +13,7 @@ import {
 import { transactionsApi, TransactionType } from "@/lib/transactionsApi";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
 import { toast } from "sonner";
-import { BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
+import { BanknoteArrowUp, BanknoteArrowDown, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Accordion,
@@ -103,7 +103,10 @@ export default function TransactionsList({
         <div className="flex items-center justify-between">
           <h2>Lastest transaction</h2>
           <Button asChild variant="secondary" className="hover:bg-sky-200">
-            <Link href="/expenses">See all</Link>
+            <Link href="/expenses">
+              See all
+              <ArrowRight />
+            </Link>
           </Button>
         </div>
       )}

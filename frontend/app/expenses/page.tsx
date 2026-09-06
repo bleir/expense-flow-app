@@ -23,9 +23,7 @@ export default function ExpensesPage() {
   }
 
   if (isError) {
-    return (
-      <p className="text-destructive p-6">Failed to load transactions.</p>
-    );
+    return <p className="text-destructive p-6">Failed to load transactions.</p>;
   }
 
   const totalAmount = (transactions ?? []).reduce(
@@ -43,7 +41,7 @@ export default function ExpensesPage() {
     <main className="p-6">
       <section className="flex justify-between">
         <Heading title="Expenses">
-          {`${count} transaction${count === 1 ? "" : "s"} · ${currencySymbol}${formattedTotal}`}
+          {`${count} transaction${count === 1 ? "" : "s"} · ${formattedTotal} ${currencySymbol}`}
         </Heading>
         <NewTransactionDialog />
       </section>
