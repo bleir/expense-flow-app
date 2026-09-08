@@ -35,8 +35,8 @@ export default function Menu() {
                 className={cn(
                   "inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium outline-none transition-colors",
                   isActive
-                    ? "bg-sky-200 text-sky-900 hover:bg-sky-200 hover:text-sky-900 focus:bg-sky-200 focus:text-sky-900 focus-visible:bg-sky-200 focus-visible:text-sky-900"
-                    : "bg-transparent hover:bg-sky-200 hover:text-sky-900",
+                    ? "bg-sky-200 text-sky-900 hover:bg-sky-200 hover:text-sky-900 focus:bg-sky-200 focus:text-sky-900 focus-visible:bg-sky-200 focus-visible:text-sky-900 dark:bg-sky-800 dark:text-sky-100 dark:hover:bg-sky-800 dark:hover:text-sky-100 dark:focus:bg-sky-800 dark:focus:text-sky-100 dark:focus-visible:bg-sky-800 dark:focus-visible:text-sky-100"
+                    : "bg-transparent hover:bg-sky-200 hover:text-sky-900 dark:hover:bg-sky-800 dark:hover:text-sky-100",
                 )}
               >
                 {item.label}

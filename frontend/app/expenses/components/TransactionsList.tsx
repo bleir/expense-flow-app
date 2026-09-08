@@ -102,7 +102,11 @@ export default function TransactionsList({
       {dashboardView && (
         <div className="flex items-center justify-between">
           <h2>Lastest transaction</h2>
-          <Button asChild variant="secondary" className="hover:bg-sky-200">
+          <Button
+            asChild
+            variant="secondary"
+            className="hover:bg-sky-200 dark:hover:bg-sky-800"
+          >
             <Link href="/expenses">
               See all
               <ArrowRight />
@@ -125,8 +129,8 @@ export default function TransactionsList({
                       className={cn(
                         "text-base font-bold tabular-nums",
                         transaction.type === "income"
-                          ? "text-green-600"
-                          : "text-black",
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-foreground",
                       )}
                     >
                       {Number(transaction.amount).toLocaleString(

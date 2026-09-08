@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import ColorSettings from "./Colors/ColorSettings";
 import CurrenciesSettings from "./Currencies/CurrenciesSettings";
+import ThemeSettings from "./Theme/ThemeSettings";
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +10,11 @@ import {
 } from "@/components/ui/accordion";
 
 const sections = [
+  {
+    name: "theme",
+    label: "Theme",
+    component: <ThemeSettings />,
+  },
   {
     name: "currencies",
     label: "Currencies",

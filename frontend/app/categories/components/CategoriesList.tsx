@@ -181,14 +181,17 @@ export default function CategoriesList() {
                     value={animatedProgress}
                     style={{ transitionDelay: `${index * 50}ms` }}
                     className={cn(
-                      "w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500",
+                      "w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500 dark:bg-gray-700 dark:[&_[data-slot=progress-indicator]]:bg-gray-400",
                       isOverBudget &&
-                        "bg-stone-200 [&_[data-slot=progress-indicator]]:bg-rose-800",
+                        "bg-stone-200 [&_[data-slot=progress-indicator]]:bg-rose-800 dark:bg-rose-950 dark:[&_[data-slot=progress-indicator]]:bg-rose-400",
                     )}
                   />
                   <div className="flex w-full justify-between text-xs text-muted-foreground">
                     <span
-                      className={cn(isOverBudget && "font-medium text-rose-800")}
+                      className={cn(
+                        isOverBudget &&
+                          "font-medium text-rose-800 dark:text-rose-400",
+                      )}
                     >{`${formatAmount(spent)} ${currency?.symbol} spent`}</span>
                     <span>
                       {`of ${formatAmount(budget)} ${currency?.symbol}`}
@@ -199,7 +202,7 @@ export default function CategoriesList() {
                 <>
                   <Progress
                     value={0}
-                    className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500"
+                    className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500 dark:bg-gray-700 dark:[&_[data-slot=progress-indicator]]:bg-gray-400"
                   />
                   <div className="flex w-full justify-between text-xs text-muted-foreground">
                     <span>Budget not set</span>
