@@ -13,16 +13,32 @@ import { ColorsModule } from './colors/colors.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('DATABASE_HOST'),
-        port: config.get<number>('DATABASE_PORT'),
-        username: config.get('DATABASE_USER'),
-        password: config.get('DATABASE_PASSWORD'),
-        database: config.get('DATABASE_NAME'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
+      useFactory: (config: ConfigService) => {
+        const ssl = { rejectUnauthorized: false };
+        const url = config.get<string>('DATABASE_URL');
+
+        if (url) {
+          return {
+            type: 'postgres' as const,
+            url,
+            autoLoadEntities: true,
+            synchronize: true,
+            ssl,
+          };
+        }
+
+        return {
+          type: 'postgres' as const,
+          host: config.get<string>('DATABASE_HOST'),
+          port: Number(config.get('DATABASE_PORT') ?? 5432),
+          username: config.get<string>('DATABASE_USER'),
+          password: config.get<string>('DATABASE_PASSWORD'),
+          database: config.get<string>('DATABASE_NAME'),
+          autoLoadEntities: true,
+          synchronize: true,
+          ssl,
+        };
+      },
     }),
     CategoriesModule,
     TransactionsModule,

@@ -6,8 +6,10 @@
     "dev:frontend": "turbo dev --filter=frontend",
     "dev:backend": "turbo dev --filter=backend",
     "build": "turbo build",
+    "build:backend": "pnpm --filter backend build",
     "lint": "turbo lint",
     "start": "turbo start",
+    "start:backend": "pnpm --filter backend start:prod",
     "test": "turbo test"
   },
   "packageManager": "pnpm@10.30.3",
