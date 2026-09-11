@@ -11,11 +11,6 @@ import {
 
 const sections = [
   {
-    name: "theme",
-    label: "Theme",
-    component: <ThemeSettings />,
-  },
-  {
     name: "currencies",
     label: "Currencies",
     component: <CurrenciesSettings />,
