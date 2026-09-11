@@ -9,11 +9,16 @@ import {
 } from "./ui/navigation-menu";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+const navItemsLoggedInUser = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Expenses", href: "/expenses" },
   { label: "Categories", href: "/categories" },
   { label: "Settings", href: "/settings" },
+];
+
+const navItemsLogoutUser = [
+  { label: "Sign in", href: "/sign-in" },
+  { label: "Sign up", href: "/sign-up" },
 ];
 
 export default function Menu() {
@@ -22,7 +27,7 @@ export default function Menu() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {navItems.map((item) => {
+        {navItemsLogoutUser.map((item) => {
           const isActive =
             pathname === item.href ||
             pathname.startsWith(`${item.href}/`) ||

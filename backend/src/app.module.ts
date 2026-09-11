@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CurrenciesModule } from './currencies/currencies.module';
 import { ColorsModule } from './colors/colors.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ColorsModule } from './colors/colors.module';
     TransactionsModule,
     CurrenciesModule,
     ColorsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
