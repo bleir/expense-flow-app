@@ -14,8 +14,13 @@ import { ColorsModule } from './colors/colors.module';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const ssl = { rejectUnauthorized: false };
         const url = config.get<string>('DATABASE_URL');
+        const host = config.get<string>('DATABASE_HOST') ?? 'localhost';
+        const isLocal =
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          Boolean(url?.includes('localhost') || url?.includes('127.0.0.1'));
+        const ssl = isLocal ? false : { rejectUnauthorized: false };
 
         if (url) {
           return {
@@ -29,7 +34,7 @@ import { ColorsModule } from './colors/colors.module';
 
         return {
           type: 'postgres' as const,
-          host: config.get<string>('DATABASE_HOST'),
+          host,
           port: Number(config.get('DATABASE_PORT') ?? 5432),
           username: config.get<string>('DATABASE_USER'),
           password: config.get<string>('DATABASE_PASSWORD'),
