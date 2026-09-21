@@ -5,6 +5,7 @@ import * as z from "zod";
 import EntityForm from "@/components/EntityForm";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -53,11 +54,12 @@ export default function CategoryForm({
   const {
     data: colors,
     isLoading,
-    isError,
   } = useQuery({
     queryFn: colorsApi.getAll,
     queryKey: ["colors"],
   });
+
+  const hasColors = Boolean(colors?.length);
 
   return (
     <EntityForm<CategoryFormValues>
@@ -93,7 +95,10 @@ export default function CategoryForm({
       }}
       onSuccess={onSuccess}
     >
-      {({ control, isPending }) => (
+      {({ control, isPending }) => {
+        const isColorDisabled = isPending || isLoading || !hasColors;
+
+        return (
         <>
           <FormField
             control={control}
@@ -123,28 +128,35 @@ export default function CategoryForm({
                   <Select
                     onValueChange={field.onChange}
                     value={field.value || undefined}
-                    disabled={isPending}
+                    disabled={isColorDisabled}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a color" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent position="popper" align="start">
-                      {colors?.map((color) => (
-                        <SelectItem key={color.id} value={color.color}>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="h-4 w-4 rounded-full border border-neutral-500"
-                              style={{ backgroundColor: color.color }}
-                            />
-                            {color.name}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                    {hasColors && (
+                      <SelectContent position="popper" align="start">
+                        {colors?.map((color) => (
+                          <SelectItem key={color.id} value={color.color}>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="h-4 w-4 rounded-full border border-neutral-500"
+                                style={{ backgroundColor: color.color }}
+                              />
+                              {color.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    )}
                   </Select>
                 </div>
+                {!isLoading && !hasColors && (
+                  <FormDescription className="text-orange-700">
+                    You need to create some colors first to choose it later here
+                  </FormDescription>
+                )}
                 <FormMessage />
               </FormItem>
             )}
@@ -164,7 +176,8 @@ export default function CategoryForm({
             )}
           />
         </>
-      )}
+        );
+      }}
     </EntityForm>
   );
 }
