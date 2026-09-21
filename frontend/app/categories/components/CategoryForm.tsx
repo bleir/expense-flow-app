@@ -119,30 +119,33 @@ export default function CategoryForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Color</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value || undefined}
-                  disabled={isPending}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a color" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {colors?.map((color) => (
-                      <SelectItem key={color.id} value={color.color}>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="h-4 w-4 rounded-full border border-neutral-500"
-                            style={{ backgroundColor: color.color }}
-                          />
-                          {color.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select
+                    modal={false}
+                    onValueChange={field.onChange}
+                    value={field.value || undefined}
+                    disabled={isPending}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a color" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent position="popper" align="start">
+                      {colors?.map((color) => (
+                        <SelectItem key={color.id} value={color.color}>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="h-4 w-4 rounded-full border border-neutral-500"
+                              style={{ backgroundColor: color.color }}
+                            />
+                            {color.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
