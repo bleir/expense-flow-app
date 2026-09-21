@@ -121,7 +121,6 @@ export default function CategoryForm({
                 <FormLabel>Color</FormLabel>
                 <div className="relative">
                   <Select
-                    modal={false}
                     onValueChange={field.onChange}
                     value={field.value || undefined}
                     disabled={isPending}
