@@ -27,7 +27,7 @@ export default function Menu() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {navItemsLogoutUser.map((item) => {
+        {navItemsLoggedInUser.map((item) => {
           const isActive =
             pathname === item.href ||
             pathname.startsWith(`${item.href}/`) ||
