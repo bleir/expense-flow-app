@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
@@ -33,5 +37,20 @@ export class AuthService {
     return result;
   }
 
-  signIn() {}
+  async signIn(createUserDto: CreateUserDto) {
+    const user = await this.usersRepository.findOneBy({
+      email: createUserDto.email,
+    });
+
+    const passwordMatches = user
+      ? await bcrypt.compare(createUserDto.password, user.password)
+      : false;
+
+    if (!user || !passwordMatches) {
+      throw new UnauthorizedException('Invalid email or password.');
+    }
+
+    const { password: _, ...result } = user;
+    return result;
+  }
 }

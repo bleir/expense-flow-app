@@ -1,45 +1,18 @@
 # Expense Flow
 
-Expense Flow is an **MVP in active development**. The app is not finished and the feature set will change as the project evolves.
+Expense Flow is a personal finance app for tracking income and expenses. It is an **MVP in active development** — the feature set will change as the project evolves.
 
-This repository is a pnpm monorepo with a Next.js frontend, a NestJS API, and Turborepo for running tasks across both apps.
+[Live demo](https://bleir.github.io/expense-flow-app/)
 
-Live demo: https://bleir.github.io/expense-flow-app/
+![Expense Flow dashboard welcome screen](docs/dashboard.png)
 
-## Structure
+The dashboard is the starting point. When you have no transactions yet, it shows a welcome card and a link to add the first one. After that, it shows a 30-day spending chart and a short list of recent activity.
 
-- `frontend` — Next.js app
-- `backend` — NestJS API
+## What it does
 
-## Getting started
+- **Expenses** — add, edit, and delete income or expense transactions, with amount, date, category, and notes
+- **Categories & budgets** — group spending and set a monthly budget per category
+- **Dashboard** — see the last 30 days of income and expenses on a chart, plus recent transactions
+- **Settings** — pick a currency, manage category colors, and switch light or dark theme
 
-```bash
-pnpm install
-pnpm dev
-```
-
-`pnpm dev` starts both apps in parallel via Turborepo.
-
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend: [http://localhost:3001](http://localhost:3001)
-
-Run them separately:
-
-```bash
-pnpm dev:frontend
-pnpm dev:backend
-```
-
-## GitHub Pages
-
-The **frontend** is deployed to GitHub Pages as a static site:
-
-**https://bleir.github.io/expense-flow-app/**
-
-GitHub Pages cannot host the NestJS API. Point the frontend at a deployed backend with a repository secret:
-
-1. Repo **Settings → Secrets and variables → Actions**
-2. Add `NEXT_PUBLIC_API_URL` (e.g. `https://your-api.example.com`)
-3. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**
-
-The workflow in `.github/workflows/deploy-github-pages.yml` publishes on every push to `master`.
+The app is a pnpm monorepo: a Next.js frontend in `frontend` and a NestJS API in `backend`.
