@@ -12,7 +12,7 @@ export default function NewCategoryDialog() {
       title="New category"
       description="Add a new category for your expenses."
       trigger={
-        <Button className="bg-sky-600 text-white hover:bg-sky-700">
+        <Button variant="primary">
           <PlusIcon />
           New category
         </Button>

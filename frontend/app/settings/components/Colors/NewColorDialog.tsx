@@ -12,7 +12,7 @@ export default function NewColorDialog() {
       title="New color"
       description="Add a color you can use in the app."
       trigger={
-        <Button size="sm" className="bg-sky-600 text-white hover:bg-sky-700">
+        <Button size="sm" variant="primary">
           <PlusIcon />
           Add color
         </Button>

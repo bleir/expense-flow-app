@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { colorsApi, type CreateColorDto, type Color } from "@/lib/colorsApi";
+import { queryKeys } from "@/lib/queryKeys";
 
 const DEFAULT_COLOR = "#808080";
 
@@ -53,7 +54,7 @@ export default function ColorForm({
           ? colorsApi.update(color!.id, payload)
           : colorsApi.create(payload);
       }}
-      queryKey={["colors"]}
+      queryKey={queryKeys.colors}
       isEditing={isEditing}
       entityName="Color"
       showHeader={showHeader}

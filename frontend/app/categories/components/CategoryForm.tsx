@@ -26,6 +26,7 @@ import {
 } from "@/lib/categoriesApi";
 import { useQuery } from "@tanstack/react-query";
 import { colorsApi } from "@/lib/colorsApi";
+import { queryKeys } from "@/lib/queryKeys";
 
 const categoryFormSchema = z.object({
   name: z
@@ -56,7 +57,7 @@ export default function CategoryForm({
     isLoading,
   } = useQuery({
     queryFn: colorsApi.getAll,
-    queryKey: ["colors"],
+    queryKey: queryKeys.colors,
   });
 
   const hasColors = Boolean(colors?.length);
@@ -81,7 +82,7 @@ export default function CategoryForm({
           ? categoriesApi.update(category!.id, payload)
           : categoriesApi.create(payload);
       }}
-      queryKey={["categories"]}
+      queryKey={queryKeys.categories}
       isEditing={isEditing}
       entityName="Category"
       showHeader={showHeader}

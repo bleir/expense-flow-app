@@ -20,7 +20,7 @@ export default function NewTransactionDialog({
       description="Add a new income or expense."
       trigger={
         trigger ?? (
-          <Button className="bg-sky-600 text-white hover:bg-sky-700">
+          <Button variant="primary">
             <PlusIcon />
             New transaction
           </Button>

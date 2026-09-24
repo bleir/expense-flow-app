@@ -106,8 +106,8 @@ export default function EntityForm<TValues extends FieldValues>({
           <div className="flex justify-end">
             <Button
               type="submit"
+              variant="primary"
               disabled={mutation.isPending}
-              className="bg-sky-600 text-white hover:bg-sky-700"
             >
               {mutation.isPending
                 ? isEditing

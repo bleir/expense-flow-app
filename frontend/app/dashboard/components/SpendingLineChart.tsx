@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
+import QueryState from "@/components/QueryState";
 import {
   Card,
   CardContent,
@@ -19,8 +19,16 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  formatDateKey,
+  formatDisplayDate,
+  parseLocalDate,
+  startOfLocalDay,
+} from "@/lib/dates";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
-import { Transaction, transactionsApi } from "@/lib/transactionsApi";
+import { formatMoney } from "@/lib/money";
+import { Transaction } from "@/lib/transactionsApi";
+import { useTransactions } from "@/lib/useTransactions";
 
 const DAYS = 30;
 
@@ -35,39 +43,17 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-function startOfLocalDay(date: Date) {
-  const next = new Date(date);
-  next.setHours(0, 0, 0, 0);
-  return next;
-}
-
 function addDays(date: Date, days: number) {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
   return next;
 }
 
-function formatDateKey(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function parseTransactionDate(date: Date | string) {
-  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return new Date(`${date}T00:00:00`);
-  }
-
-  const parsed = new Date(date);
-  return Number.isNaN(parsed.getTime()) ? null : startOfLocalDay(parsed);
-}
-
 function buildDailyTotals(transactions: Transaction[]) {
   const dated = transactions
     .map((transaction) => ({
       ...transaction,
-      parsedDate: parseTransactionDate(transaction.date),
+      parsedDate: parseLocalDate(transaction.date),
     }))
     .filter(
       (transaction): transaction is typeof transaction & { parsedDate: Date } =>
@@ -128,38 +114,31 @@ export default function SpendingLineChart() {
     data: transactions,
     isPending,
     isError,
-  } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => transactionsApi.getAll(),
-  });
+  } = useTransactions();
 
   const chartData = useMemo(
     () => buildDailyTotals(transactions ?? []),
     [transactions],
   );
 
-  if (isPending) {
-    return <p className="text-muted-foreground">Loading chart...</p>;
-  }
-
-  if (isError) {
-    return <p className="text-destructive">Failed to load chart.</p>;
-  }
-
-  if (!transactions?.length) {
-    return (
-      <Card className="border-dashed">
-        <CardHeader>
-          <CardTitle>Spending</CardTitle>
-          <CardDescription>
-            Create a transaction to see your last 30 days on a chart.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
   return (
+    <QueryState
+      isLoading={isPending}
+      isError={isError}
+      isEmpty={!transactions?.length}
+      loadingMessage="Loading chart..."
+      errorMessage="Failed to load chart."
+      empty={
+        <Card className="border-dashed">
+          <CardHeader>
+            <CardTitle>Spending</CardTitle>
+            <CardDescription>
+              Create a transaction to see your last 30 days on a chart.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      }
+    >
     <Card>
       <CardHeader>
         <CardTitle>Last 30 days</CardTitle>
@@ -178,10 +157,7 @@ export default function SpendingLineChart() {
               tickMargin={8}
               minTickGap={24}
               tickFormatter={(value: string) =>
-                new Date(`${value}T00:00:00`).toLocaleDateString(
-                  navigator.language,
-                  { month: "short", day: "numeric" },
-                )
+                formatDisplayDate(value, { month: "short", day: "numeric" })
               }
             />
             <YAxis
@@ -189,7 +165,8 @@ export default function SpendingLineChart() {
               axisLine={false}
               width={48}
               tickFormatter={(value: number) =>
-                value.toLocaleString(navigator.language, {
+                formatMoney(value, {
+                  minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
                 })
               }
@@ -199,14 +176,7 @@ export default function SpendingLineChart() {
                 <ChartTooltipContent
                   labelFormatter={(value) =>
                     typeof value === "string"
-                      ? new Date(`${value}T00:00:00`).toLocaleDateString(
-                          navigator.language,
-                          {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          },
-                        )
+                      ? formatDisplayDate(value)
                       : String(value ?? "")
                   }
                 />
@@ -233,5 +203,6 @@ export default function SpendingLineChart() {
         </ChartContainer>
       </CardContent>
     </Card>
+    </QueryState>
   );
 }

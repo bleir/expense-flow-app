@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 
 import { currenciesApi } from "@/lib/currenciesApi";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const DEFAULT_CURRENCY_STORAGE_KEY = "expense-flow-default-currency-id";
 
@@ -11,7 +12,7 @@ export function useDefaultCurrency() {
   const [currencyId, setCurrencyId] = useState("");
 
   const { data: currencies } = useQuery({
-    queryKey: ["currencies"],
+    queryKey: queryKeys.currencies,
     queryFn: currenciesApi.getAll,
   });
 

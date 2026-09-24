@@ -12,7 +12,7 @@ export default function NewCurrencyDialog() {
       title="New currency"
       description="Add a currency you can use in the app."
       trigger={
-        <Button size="sm" className="bg-sky-600 text-white hover:bg-sky-700">
+        <Button size="sm" variant="primary">
           <PlusIcon />
           Add currency
         </Button>

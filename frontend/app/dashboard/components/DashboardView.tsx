@@ -1,35 +1,28 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-
+import QueryState from "@/components/QueryState";
 import TransactionsList from "@/app/expenses/components/TransactionsList";
-import { transactionsApi } from "@/lib/transactionsApi";
+import { useTransactions } from "@/lib/useTransactions";
 
 import SpendingLineChart from "./SpendingLineChart";
 import WelcomeCard from "./WelcomeCard";
 
 export default function DashboardView() {
-  const { data: transactions, isPending, isError } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => transactionsApi.getAll(),
-  });
-
-  if (isPending) {
-    return <p className="text-muted-foreground">Loading dashboard...</p>;
-  }
-
-  if (isError) {
-    return <p className="text-destructive">Failed to load dashboard.</p>;
-  }
-
-  if (!transactions?.length) {
-    return <WelcomeCard />;
-  }
+  const { data: transactions, isPending, isError } = useTransactions();
 
   return (
-    <>
-      <SpendingLineChart />
-      <TransactionsList dashboardView={true} />
-    </>
+    <QueryState
+      isLoading={isPending}
+      isError={isError}
+      isEmpty={!transactions?.length}
+      loadingMessage="Loading dashboard..."
+      errorMessage="Failed to load dashboard."
+      empty={<WelcomeCard />}
+    >
+      <>
+        <SpendingLineChart />
+        <TransactionsList dashboardView />
+      </>
+    </QueryState>
   );
 }

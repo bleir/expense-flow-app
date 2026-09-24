@@ -1,18 +1,21 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
 import EditTransactionDialog from "./EditTransactionDialog";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import QueryState from "@/components/QueryState";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { transactionsApi, TransactionType } from "@/lib/transactionsApi";
+import { transactionsApi, type TransactionType } from "@/lib/transactionsApi";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
-import { toast } from "sonner";
+import { formatDisplayDate } from "@/lib/dates";
+import { formatMoney } from "@/lib/money";
+import { queryKeys } from "@/lib/queryKeys";
+import { useDeleteEntity } from "@/lib/useDeleteEntity";
+import { useTransactions } from "@/lib/useTransactions";
 import { BanknoteArrowUp, BanknoteArrowDown, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -32,29 +35,11 @@ const renderTransactionIcon = (transactionType: TransactionType) => {
   );
 };
 
-const formatTransactionDate = (date: Date | string) => {
-  const parsed =
-    typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)
-      ? new Date(`${date}T00:00:00`)
-      : new Date(date);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return "—";
-  }
-
-  return parsed.toLocaleDateString(navigator.language, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
 export default function TransactionsList({
   dashboardView,
 }: {
   dashboardView?: boolean;
 }) {
-  const queryClient = useQueryClient();
   const { currency } = useDefaultCurrency();
   const currencySymbol = currency?.symbol ?? "$";
 
@@ -62,42 +47,36 @@ export default function TransactionsList({
     data: transactions,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["transactions", { limit: dashboardView ? 10 : undefined }],
-    queryFn: () =>
-      transactionsApi.getAll(dashboardView ? { limit: 10 } : undefined),
+  } = useTransactions();
+
+  const deleteMutation = useDeleteEntity({
+    queryKey: queryKeys.transactions,
+    deleteFn: transactionsApi.delete,
+    entityName: "Transaction",
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => transactionsApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      toast.success("Transaction has been deleted");
-    },
-  });
-
-  if (isLoading) {
-    return <p className="text-muted-foreground">Loading transactions...</p>;
-  }
-
-  if (isError) {
-    return <p className="text-destructive">Failed to load transactions.</p>;
-  }
-
-  if (!transactions?.length) {
-    return (
-      <Card className="border-dashed">
-        <CardHeader>
-          <CardTitle>No transactions yet</CardTitle>
-          <CardDescription>
-            Create your first transaction to get started.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
+  const visibleTransactions = dashboardView
+    ? transactions?.slice(0, 10)
+    : transactions;
 
   return (
+    <QueryState
+      isLoading={isLoading}
+      isError={isError}
+      isEmpty={!transactions?.length}
+      loadingMessage="Loading transactions..."
+      errorMessage="Failed to load transactions."
+      empty={
+        <Card className="border-dashed">
+          <CardHeader>
+            <CardTitle>No transactions yet</CardTitle>
+            <CardDescription>
+              Create your first transaction to get started.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      }
+    >
     <div className="mt-4 flex flex-col gap-4">
       {dashboardView && (
         <div className="flex items-center justify-between">
@@ -115,7 +94,7 @@ export default function TransactionsList({
         </div>
       )}
       <Card className="gap-0 divide-y py-0">
-        {transactions.map((transaction) => {
+        {(visibleTransactions ?? []).map((transaction) => {
           return (
             <Accordion key={transaction.id} type="multiple">
               <AccordionItem value={transaction.id}>
@@ -133,14 +112,7 @@ export default function TransactionsList({
                           : "text-foreground",
                       )}
                     >
-                      {Number(transaction.amount).toLocaleString(
-                        navigator.language,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        },
-                      )}{" "}
-                      {currencySymbol}
+                      {formatMoney(transaction.amount)} {currencySymbol}
                     </span>
                   </AccordionTrigger>
                   <div className="flex shrink-0 items-center">
@@ -158,7 +130,7 @@ export default function TransactionsList({
                   <div className="min-w-0">
                     <p className="text-gray-500 text-sm pb-1">Date</p>
                     <p className="text-base">
-                      {formatTransactionDate(transaction.date)}
+                      {formatDisplayDate(transaction.date)}
                     </p>
                   </div>
                   <div className="min-w-0">
@@ -188,5 +160,6 @@ export default function TransactionsList({
         })}
       </Card>
     </div>
+    </QueryState>
   );
 }

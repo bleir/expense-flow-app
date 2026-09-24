@@ -1,22 +1,5 @@
-import axios from "axios";
 import { routes } from "@/constants";
-import { API_URL } from "@/lib/apiBaseUrl";
-
-const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000,
-});
-
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API Error: ", error.response);
-    return Promise.reject(error);
-  },
-);
+import { createCrudApi } from "@/lib/createCrudApi";
 
 export interface Color {
   id: string;
@@ -31,26 +14,4 @@ export interface CreateColorDto {
 
 export type UpdateColorDto = Partial<CreateColorDto>;
 
-export const colorsApi = {
-  getAll: async (): Promise<Color[]> => {
-    const { data } = await apiClient.get<Color[]>(routes.colors);
-    return data;
-  },
-
-  create: async (colorData: CreateColorDto): Promise<Color> => {
-    const { data } = await apiClient.post<Color>(routes.colors, colorData);
-    return data;
-  },
-
-  update: async (id: string, colorData: UpdateColorDto): Promise<Color> => {
-    const { data } = await apiClient.patch<Color>(
-      `${routes.colors}/${id}`,
-      colorData,
-    );
-    return data;
-  },
-
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`${routes.colors}/${id}`);
-  },
-};
+export const colorsApi = createCrudApi<Color, CreateColorDto>(routes.colors);

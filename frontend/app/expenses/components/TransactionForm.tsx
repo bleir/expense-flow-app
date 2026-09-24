@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { categoriesApi } from "@/lib/categoriesApi";
+import { toDateInputValue } from "@/lib/dates";
+import { queryKeys } from "@/lib/queryKeys";
 import {
   transactionsApi,
   type CreateTransactionDto,
@@ -48,14 +50,6 @@ type TransactionFormProps = {
   onSuccess?: () => void;
 };
 
-function toDateInputValue(date?: Date | string) {
-  if (!date) {
-    return new Date().toISOString().slice(0, 10);
-  }
-
-  return new Date(date).toISOString().slice(0, 10);
-}
-
 export default function TransactionForm({
   transaction,
   showHeader = true,
@@ -63,7 +57,7 @@ export default function TransactionForm({
 }: TransactionFormProps) {
   const isEditing = Boolean(transaction);
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ["categories"],
+    queryKey: queryKeys.categories,
     queryFn: categoriesApi.getAll,
   });
 
@@ -83,7 +77,7 @@ export default function TransactionForm({
           ? transactionsApi.update(transaction!.id, data)
           : transactionsApi.create(data)
       }
-      queryKey={["transactions"]}
+      queryKey={queryKeys.transactions}
       isEditing={isEditing}
       entityName="Transaction"
       showHeader={showHeader}

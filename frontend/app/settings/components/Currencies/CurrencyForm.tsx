@@ -16,6 +16,7 @@ import {
   type CreateCurrencyDto,
   type Currency,
 } from "@/lib/currenciesApi";
+import { queryKeys } from "@/lib/queryKeys";
 
 const currencyFormSchema = z.object({
   currency: z
@@ -64,7 +65,7 @@ export default function CurrencyForm({
           ? currenciesApi.update(currency!.id, payload)
           : currenciesApi.create(payload);
       }}
-      queryKey={["currencies"]}
+      queryKey={queryKeys.currencies}
       isEditing={isEditing}
       entityName="Currency"
       showHeader={showHeader}

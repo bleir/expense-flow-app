@@ -1,22 +1,5 @@
-import axios from "axios";
 import { routes } from "@/constants";
-import { API_URL } from "@/lib/apiBaseUrl";
-
-const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000,
-});
-
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API Error: ", error.response);
-    return Promise.reject(error);
-  },
-);
+import { createCrudApi } from "@/lib/createCrudApi";
 
 export interface Currency {
   id: string;
@@ -35,32 +18,6 @@ export interface CreateCurrencyDto {
 
 export type UpdateCurrencyDto = Partial<CreateCurrencyDto>;
 
-export const currenciesApi = {
-  getAll: async (): Promise<Currency[]> => {
-    const { data } = await apiClient.get<Currency[]>(routes.currencies);
-    return data;
-  },
-
-  create: async (currencyData: CreateCurrencyDto): Promise<Currency> => {
-    const { data } = await apiClient.post<Currency>(
-      routes.currencies,
-      currencyData,
-    );
-    return data;
-  },
-
-  update: async (
-    id: string,
-    currencyData: UpdateCurrencyDto,
-  ): Promise<Currency> => {
-    const { data } = await apiClient.patch<Currency>(
-      `${routes.currencies}/${id}`,
-      currencyData,
-    );
-    return data;
-  },
-
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`${routes.currencies}/${id}`);
-  },
-};
+export const currenciesApi = createCrudApi<Currency, CreateCurrencyDto>(
+  routes.currencies,
+);

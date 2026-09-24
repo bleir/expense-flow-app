@@ -1,30 +1,16 @@
 "use client";
 
 import Heading from "@/components/Heading";
+import QueryState from "@/components/QueryState";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
-import { transactionsApi } from "@/lib/transactionsApi";
-import { useQuery } from "@tanstack/react-query";
+import { formatMoney } from "@/lib/money";
+import { useTransactions } from "@/lib/useTransactions";
 import NewTransactionDialog from "./components/NewTransactionDialog";
 import TransactionsList from "./components/TransactionsList";
 
 export default function ExpensesPage() {
   const { currency } = useDefaultCurrency();
-  const {
-    data: transactions,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => transactionsApi.getAll(),
-  });
-
-  if (isLoading) {
-    return <p className="text-muted-foreground p-6">Loading transactions...</p>;
-  }
-
-  if (isError) {
-    return <p className="text-destructive p-6">Failed to load transactions.</p>;
-  }
+  const { data: transactions, isLoading, isError } = useTransactions();
 
   const totalAmount = (transactions ?? []).reduce(
     (sum, transaction) => sum + Number(transaction.amount),
@@ -32,22 +18,26 @@ export default function ExpensesPage() {
   );
   const count = transactions?.length ?? 0;
   const currencySymbol = currency?.symbol ?? "$";
-  const formattedTotal = totalAmount.toLocaleString(navigator.language, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
 
   return (
-    <main className="p-6">
-      <section className="flex justify-between">
-        <Heading title="Expenses">
-          {`${count} transaction${count === 1 ? "" : "s"} · ${formattedTotal} ${currencySymbol}`}
-        </Heading>
-        <NewTransactionDialog />
-      </section>
-      <section>
-        <TransactionsList />
-      </section>
-    </main>
+    <QueryState
+      isLoading={isLoading}
+      isError={isError}
+      loadingMessage="Loading transactions..."
+      errorMessage="Failed to load transactions."
+      className="p-6"
+    >
+      <main className="p-6">
+        <section className="flex justify-between">
+          <Heading title="Expenses">
+            {`${count} transaction${count === 1 ? "" : "s"} · ${formatMoney(totalAmount)} ${currencySymbol}`}
+          </Heading>
+          <NewTransactionDialog />
+        </section>
+        <section>
+          <TransactionsList />
+        </section>
+      </main>
+    </QueryState>
   );
 }

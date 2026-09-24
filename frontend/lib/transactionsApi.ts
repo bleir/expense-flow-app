@@ -1,22 +1,5 @@
-import axios from "axios";
 import { routes } from "@/constants";
-import { API_URL } from "@/lib/apiBaseUrl";
-
-const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000,
-});
-
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API Error: ", error.response);
-    return Promise.reject(error);
-  },
-);
+import { createCrudApi } from "@/lib/createCrudApi";
 
 export type TransactionType = "income" | "expense";
 
@@ -48,36 +31,6 @@ export interface CreateTransactionDto {
 
 export type UpdateTransactionDto = Partial<CreateTransactionDto>;
 
-export const transactionsApi = {
-  getAll: async (params?: { limit?: number }): Promise<Transaction[]> => {
-    const { data } = await apiClient.get<Transaction[]>(routes.transactions, {
-      params,
-    });
-    return data;
-  },
-
-  create: async (
-    transactionData: CreateTransactionDto,
-  ): Promise<Transaction> => {
-    const { data } = await apiClient.post<Transaction>(
-      routes.transactions,
-      transactionData,
-    );
-    return data;
-  },
-
-  update: async (
-    id: string,
-    transactionData: UpdateTransactionDto,
-  ): Promise<Transaction> => {
-    const { data } = await apiClient.patch<Transaction>(
-      `${routes.transactions}/${id}`,
-      transactionData,
-    );
-    return data;
-  },
-
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`${routes.transactions}/${id}`);
-  },
-};
+export const transactionsApi = createCrudApi<Transaction, CreateTransactionDto>(
+  routes.transactions,
+);

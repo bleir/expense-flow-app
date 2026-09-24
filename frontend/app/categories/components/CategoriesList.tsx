@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import EditCategoryDialog from "./EditCategoryDialog";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import QueryState from "@/components/QueryState";
 import {
   Card,
   CardAction,
@@ -15,27 +16,14 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { categoriesApi } from "@/lib/categoriesApi";
-import { toast } from "sonner";
+import { isInCurrentMonth } from "@/lib/dates";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
-import { Transaction, transactionsApi } from "@/lib/transactionsApi";
+import { formatMoney } from "@/lib/money";
+import { queryKeys } from "@/lib/queryKeys";
+import { useDeleteEntity } from "@/lib/useDeleteEntity";
+import { useTransactions } from "@/lib/useTransactions";
+import { Transaction } from "@/lib/transactionsApi";
 import { cn } from "@/lib/utils";
-
-function isInCurrentMonth(date: Date | string) {
-  const parsed =
-    typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)
-      ? new Date(`${date}T00:00:00`)
-      : new Date(date);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return false;
-  }
-
-  const now = new Date();
-  return (
-    parsed.getFullYear() === now.getFullYear() &&
-    parsed.getMonth() === now.getMonth()
-  );
-}
 
 function getSpentByCategory(transactions: Transaction[] | undefined) {
   const totals = new Map<string, number>();
@@ -59,15 +47,7 @@ function getSpentByCategory(transactions: Transaction[] | undefined) {
   return totals;
 }
 
-function formatAmount(amount: number) {
-  return amount.toLocaleString(navigator.language, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
-
 export default function CategoriesList() {
-  const queryClient = useQueryClient();
   const { currency } = useDefaultCurrency();
 
   const {
@@ -75,7 +55,7 @@ export default function CategoriesList() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["categories"],
+    queryKey: queryKeys.categories,
     queryFn: categoriesApi.getAll,
   });
 
@@ -83,17 +63,12 @@ export default function CategoriesList() {
     data: transactions,
     isLoading: isLoadingTransactions,
     isError: isErrorTransactions,
-  } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => transactionsApi.getAll(),
-  });
+  } = useTransactions();
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => categoriesApi.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      toast.success("Category has been deleted");
-    },
+  const deleteMutation = useDeleteEntity({
+    queryKey: queryKeys.categories,
+    deleteFn: categoriesApi.delete,
+    entityName: "Category",
   });
 
   const spentByCategory = useMemo(
@@ -122,30 +97,26 @@ export default function CategoriesList() {
     };
   }, [isReady]);
 
-  if (isLoading || isLoadingTransactions) {
-    return <p className="text-muted-foreground">Loading categories...</p>;
-  }
-
-  if (isError || isErrorTransactions) {
-    return <p className="text-destructive">Failed to load categories.</p>;
-  }
-
-  if (!categories?.length) {
-    return (
-      <Card className="border-dashed">
-        <CardHeader>
-          <CardTitle>No categories yet</CardTitle>
-          <CardDescription>
-            Create your first category to get started.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
   return (
+    <QueryState
+      isLoading={isLoading || isLoadingTransactions}
+      isError={isError || isErrorTransactions}
+      isEmpty={!categories?.length}
+      loadingMessage="Loading categories..."
+      errorMessage="Failed to load categories."
+      empty={
+        <Card className="border-dashed">
+          <CardHeader>
+            <CardTitle>No categories yet</CardTitle>
+            <CardDescription>
+              Create your first category to get started.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      }
+    >
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {categories.map((category, index) => {
+      {(categories ?? []).map((category, index) => {
         const spent = spentByCategory.get(category.id) ?? 0;
         const budget = Number(category.monthlyBudget);
         const isOverBudget = budget > 0 && spent > budget;
@@ -192,9 +163,9 @@ export default function CategoriesList() {
                         isOverBudget &&
                           "font-medium text-rose-800 dark:text-rose-400",
                       )}
-                    >{`${formatAmount(spent)} ${currency?.symbol} spent`}</span>
+                    >{`${formatMoney(spent)} ${currency?.symbol} spent`}</span>
                     <span>
-                      {`of ${formatAmount(budget)} ${currency?.symbol}`}
+                      {`of ${formatMoney(budget)} ${currency?.symbol}`}
                     </span>
                   </div>
                 </>
@@ -214,5 +185,6 @@ export default function CategoriesList() {
         );
       })}
     </div>
+    </QueryState>
   );
 }
