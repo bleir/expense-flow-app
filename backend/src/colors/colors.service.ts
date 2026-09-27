@@ -15,7 +15,7 @@ export class ColorsService {
   createColor(createColorDto: CreateColorDto) {
     const color = this.colorsRepository.create(createColorDto);
 
-    this.colorsRepository.save(color);
+    return this.colorsRepository.save(color);
   }
 
   getColors() {
