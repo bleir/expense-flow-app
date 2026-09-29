@@ -2,8 +2,6 @@
 
 Expense Flow is a personal finance app for tracking income and expenses. It is an **MVP in active development** — the feature set will change as the project evolves.
 
-[Live demo](https://bleir.github.io/expense-flow-app/)
-
 ![Expense Flow dashboard welcome screen](docs/dashboard.png)
 
 The dashboard is the starting point. When you have no transactions yet, it shows a welcome card and a link to add the first one. After that, it shows a 30-day spending chart and a short list of recent activity.
