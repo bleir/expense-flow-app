@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TransactionType } from './transaction.enum';
-import { Category } from 'src/categories/category.entity';
+import { Category } from '../categories/category.entity';
 
 @Entity()
 export class Transaction {
