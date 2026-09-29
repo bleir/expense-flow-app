@@ -37,6 +37,7 @@ jobs:
         run: pnpm --filter frontend build
         env:
           GITHUB_PAGES: "true"
+          NEXT_PUBLIC_API_URL: "https://expense-flow-app-backend.vercel.app"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
