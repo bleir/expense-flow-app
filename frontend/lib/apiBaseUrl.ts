@@ -1,5 +1,4 @@
-const PRODUCTION_API_URL =
-  "https://expense-flow-app-backend-git-master-adamsalej.vercel.app/";
+const PRODUCTION_API_URL = "https://expense-flow-app-backend.vercel.app";
 
 const apiUrl =
   process.env.NEXT_PUBLIC_API_URL?.trim() ||
