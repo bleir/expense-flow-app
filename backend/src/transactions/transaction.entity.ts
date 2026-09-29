@@ -8,14 +8,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TransactionType } from './transaction.enum.js';
-import { Category } from '../categories/category.entity.js';
+import type { Category } from '../categories/category.entity.js';
 
 @Entity()
 export class Transaction {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @ManyToOne(() => Category, (category) => category.transactions, {
+  @ManyToOne('Category', 'transactions', {
     nullable: false,
     onDelete: 'RESTRICT',
   })
