@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TransactionsService } from './transactions.service';
-import { Transaction } from './transaction.entity';
+import { TransactionsService } from './transactions.service.js';
+import { Transaction } from './transaction.entity.js';
 
 describe('TransactionsService', () => {
   let service: TransactionsService;

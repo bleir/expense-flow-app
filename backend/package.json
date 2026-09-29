@@ -5,6 +5,10 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -12,7 +16,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -77,6 +81,7 @@
       ]
     },
     "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1",
       "^src/(.*)$": "<rootDir>/$1",
       "^@nestjs/typeorm$": "<rootDir>/../test/nestjs-typeorm-stub.ts",
       "^@nestjs/mapped-types$": "<rootDir>/../test/nestjs-mapped-types-stub.ts"

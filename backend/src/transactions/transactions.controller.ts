@@ -8,9 +8,9 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { TransactionsService } from './transactions.service.js';
+import { CreateTransactionDto } from './dto/create-transaction.dto.js';
+import { UpdateTransactionDto } from './dto/update-transaction.dto.js';
 
 @Controller('transactions')
 export class TransactionsController {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ColorsService } from './colors.service';
-import { Color } from './color.entity';
+import { ColorsService } from './colors.service.js';
+import { Color } from './color.entity.js';
 
 describe('ColorsService', () => {
   let service: ColorsService;

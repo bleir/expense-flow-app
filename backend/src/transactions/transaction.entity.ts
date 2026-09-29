@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { TransactionType } from './transaction.enum';
-import { Category } from '../categories/category.entity';
+import { TransactionType } from './transaction.enum.js';
+import { Category } from '../categories/category.entity.js';
 
 @Entity()
 export class Transaction {

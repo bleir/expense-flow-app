@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CategoriesModule } from './categories/categories.module';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { CategoriesModule } from './categories/categories.module.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TransactionsModule } from './transactions/transactions.module';
-import { CurrenciesModule } from './currencies/currencies.module';
-import { ColorsModule } from './colors/colors.module';
-import { AuthModule } from './auth/auth.module';
+import { TransactionsModule } from './transactions/transactions.module.js';
+import { CurrenciesModule } from './currencies/currencies.module.js';
+import { ColorsModule } from './colors/colors.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   imports: [

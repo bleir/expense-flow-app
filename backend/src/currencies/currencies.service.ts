@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Currency } from './currency.entity';
+import { Currency } from './currency.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateCurrencyDto } from './dto/create-currency.dto';
-import { UpdateCurrencyDto } from './dto/update-currency.dto';
+import { CreateCurrencyDto } from './dto/create-currency.dto.js';
+import { UpdateCurrencyDto } from './dto/update-currency.dto.js';
 
 @Injectable()
 export class CurrenciesService {

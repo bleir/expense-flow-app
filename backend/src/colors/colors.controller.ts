@@ -7,9 +7,9 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateColorDto } from './dto/create-color.dto';
-import { ColorsService } from './colors.service';
-import { UpdateColorDto } from './dto/update-color.dto';
+import { CreateColorDto } from './dto/create-color.dto.js';
+import { ColorsService } from './colors.service.js';
+import { UpdateColorDto } from './dto/update-color.dto.js';
 
 @Controller('colors')
 export class ColorsController {

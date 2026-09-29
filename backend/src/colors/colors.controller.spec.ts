@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import { Test, TestingModule } from '@nestjs/testing';
-import { ColorsController } from './colors.controller';
-import { ColorsService } from './colors.service';
+import { ColorsController } from './colors.controller.js';
+import { ColorsService } from './colors.service.js';
 
 describe('ColorsController', () => {
   let controller: ColorsController;

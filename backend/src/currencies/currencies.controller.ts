@@ -7,9 +7,9 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CurrenciesService } from './currencies.service';
-import { CreateCurrencyDto } from './dto/create-currency.dto';
-import { UpdateCurrencyDto } from './dto/update-currency.dto';
+import { CurrenciesService } from './currencies.service.js';
+import { CreateCurrencyDto } from './dto/create-currency.dto.js';
+import { UpdateCurrencyDto } from './dto/update-currency.dto.js';
 
 @Controller('currencies')
 export class CurrenciesController {
