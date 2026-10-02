@@ -8,6 +8,13 @@ import { TransactionsModule } from './transactions/transactions.module.js';
 import { CurrenciesModule } from './currencies/currencies.module.js';
 import { ColorsModule } from './colors/colors.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import pg from 'pg';
+
+function postgresUrl(url: string): string {
+  const parsed = new URL(url);
+  parsed.searchParams.delete('channel_binding');
+  return parsed.toString();
+}
 
 @Module({
   imports: [
@@ -26,7 +33,8 @@ import { AuthModule } from './auth/auth.module.js';
         if (url) {
           return {
             type: 'postgres' as const,
-            url,
+            driver: pg,
+            url: postgresUrl(url),
             autoLoadEntities: true,
             synchronize: true,
             ssl,
@@ -35,6 +43,7 @@ import { AuthModule } from './auth/auth.module.js';
 
         return {
           type: 'postgres' as const,
+          driver: pg,
           host,
           port: Number(config.get('DATABASE_PORT') ?? 5432),
           username: config.get<string>('DATABASE_USER'),
