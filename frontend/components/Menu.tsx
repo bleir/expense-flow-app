@@ -1,54 +1,67 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
 } from "./ui/navigation-menu";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import { Button, buttonVariants } from "./ui/button";
+import { VariantProps } from "class-variance-authority";
+import SignInDialog from "./SignInDialog";
+import { redirect } from "next/navigation";
+import SignUpDialog from "./SignUpDialog";
 
-const navItemsLoggedInUser = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Expenses", href: "/expenses" },
-  { label: "Categories", href: "/categories" },
-  { label: "Settings", href: "/settings" },
-];
+type NavItem = {
+  label: string;
+  href: string;
+  variant: NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
+};
 
-const navItemsLogoutUser = [
-  { label: "Sign in", href: "/sign-in" },
-  { label: "Sign up", href: "/sign-up" },
+const navItemsLoggedInUser: NavItem[] = [
+  { label: "Dashboard", href: "/dashboard", variant: "ghost" },
+  { label: "Expenses", href: "/expenses", variant: "ghost" },
+  { label: "Categories", href: "/categories", variant: "ghost" },
+  { label: "Settings", href: "/settings", variant: "ghost" },
 ];
 
 export default function Menu() {
-  const pathname = usePathname();
+  const { isLoggedIn, setUser } = useAuth();
+
+  const handleLogout = () => {
+    setUser(null);
+    redirect("/");
+  };
 
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {navItemsLoggedInUser.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            pathname.startsWith(`${item.href}/`) ||
-            (item.href === "/dashboard" && pathname === "/");
-
-          return (
-            <NavigationMenuItem key={item.href}>
-              <Link
-                href={item.href}
-                className={cn(
-                  "inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium outline-none transition-colors",
-                  isActive
-                    ? "bg-sky-200 text-sky-900 hover:bg-sky-200 hover:text-sky-900 focus:bg-sky-200 focus:text-sky-900 focus-visible:bg-sky-200 focus-visible:text-sky-900 dark:bg-sky-800 dark:text-sky-100 dark:hover:bg-sky-800 dark:hover:text-sky-100 dark:focus:bg-sky-800 dark:focus:text-sky-100 dark:focus-visible:bg-sky-800 dark:focus-visible:text-sky-100"
-                    : "bg-transparent hover:bg-sky-200 hover:text-sky-900 dark:hover:bg-sky-800 dark:hover:text-sky-100",
-                )}
-              >
-                {item.label}
-              </Link>
+        {isLoggedIn ? (
+          <>
+            {navItemsLoggedInUser.map((item) => (
+              <NavigationMenuItem key={item.href}>
+                <Button variant={item.variant} asChild className="mx-1">
+                  <Link href={item.href}>{item.label}</Link>
+                </Button>
+              </NavigationMenuItem>
+            ))}
+            <NavigationMenuItem>
+              <Button variant="destructive" onClick={handleLogout}>
+                Logout
+              </Button>
             </NavigationMenuItem>
-          );
-        })}
+          </>
+        ) : (
+          <>
+            <NavigationMenuItem>
+              <SignInDialog />
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <SignUpDialog />
+            </NavigationMenuItem>
+          </>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );
