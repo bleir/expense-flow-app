@@ -4,13 +4,26 @@ import TransactionsList from "@/app/expenses/components/TransactionsList";
 import Heading from "@/components/Heading";
 import QueryState from "@/components/QueryState";
 import TransactionSummary from "@/components/TransactionSummary";
+import { useAuth } from "@/lib/auth";
 import { useTransactions } from "@/lib/useTransactions";
 
+import GuestDashboard from "./GuestDashboard";
 import SpendingLineChart from "./SpendingLineChart";
 import WelcomeCard from "./WelcomeCard";
 
 export default function DashboardView() {
-  const { data: transactions, isPending, isError } = useTransactions();
+  const { isLoggedIn, isReady } = useAuth();
+  const { data: transactions, isPending, isError } = useTransactions({
+    enabled: isReady && isLoggedIn,
+  });
+
+  if (!isReady) {
+    return <p className="text-muted-foreground">Loading dashboard...</p>;
+  }
+
+  if (!isLoggedIn) {
+    return <GuestDashboard />;
+  }
 
   return (
     <>

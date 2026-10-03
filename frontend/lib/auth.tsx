@@ -7,6 +7,7 @@ type AuthUser = { id: string; email: string };
 type AuthContextValue = {
   user: AuthUser | null;
   isLoggedIn: boolean;
+  isReady: boolean;
   setUser: (user: AuthUser | null) => void;
 };
 
@@ -15,12 +16,12 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUserState] = useState<AuthUser | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-
-    setUserState(JSON.parse(raw) as AuthUser);
+    if (raw) setUserState(JSON.parse(raw) as AuthUser);
+    setIsReady(true);
   }, []);
 
   function setUser(next: AuthUser | null) {
@@ -30,7 +31,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: user !== null, setUser }}>
+    <AuthContext.Provider
+      value={{ user, isLoggedIn: user !== null, isReady, setUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
