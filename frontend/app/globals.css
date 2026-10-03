@@ -20,10 +20,10 @@
   --accent-foreground: 0 0% 9%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
-  --border: 214 15% 88%;
-  --input: 214 15% 88%;
+  --border: 214 18% 91%;
+  --input: 214 18% 91%;
   --ring: 200 98% 39%;
-  --radius: 0.5rem;
+  --radius: 0.875rem;
   --chart-1: 200 98% 39%;
   --chart-2: 173 58% 39%;
   --chart-3: 197 37% 24%;
@@ -48,8 +48,8 @@
   --accent-foreground: 0 0% 98%;
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
-  --border: 220 8% 22%;
-  --input: 220 8% 22%;
+  --border: 220 10% 20%;
+  --input: 220 10% 20%;
   --ring: 199 89% 48%;
   --chart-1: 199 89% 48%;
   --chart-2: 160 60% 45%;
@@ -64,6 +64,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 4px 12px -4px rgb(15 23 42 / 0.08);
+  --shadow-md: 0 8px 20px -8px rgb(15 23 42 / 0.12);
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
