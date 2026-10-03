@@ -1,11 +1,13 @@
 "use client";
 
-import { useAuth } from "@/lib/auth";
+import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+
+import { apiClient } from "@/lib/apiClient";
+import { useAuth } from "@/lib/auth";
 import FormDialog from "./FormDialog";
 import { Button } from "./ui/button";
-import { apiClient } from "@/lib/apiClient";
 import { Input } from "./ui/input";
 
 type AuthUser = { id: string; email: string };
@@ -18,8 +20,13 @@ export default function SignInDialog() {
 
   return (
     <FormDialog
-      title="Sign in"
-      description="Use your email and password."
+      title="Welcome back"
+      description="Sign in with the email and password for your account."
+      leading={
+        <span className="mb-1 flex size-10 items-center justify-center rounded-lg bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+          <LogIn className="size-5" />
+        </span>
+      }
       trigger={
         <Button variant="primary" className="mx-1">
           Sign in

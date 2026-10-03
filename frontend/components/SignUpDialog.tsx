@@ -1,13 +1,15 @@
 "use client";
 
-import { useAuth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+
+import { apiClient } from "@/lib/apiClient";
+import WelcomeIllustration from "@/components/WelcomeIllustration";
+import { useAuth } from "@/lib/auth";
 import FormDialog from "./FormDialog";
 import { Button } from "./ui/button";
-import { apiClient } from "@/lib/apiClient";
 import { Input } from "./ui/input";
-import { redirect } from "next/navigation";
 
 type AuthUser = { id: string; email: string };
 
@@ -15,12 +17,15 @@ export default function SignUpDialog() {
   const { setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordTooShort, setPasswordTooShort] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   return (
     <FormDialog
-      title="Sign up"
-      description="Create your account and start using the app"
+      title="Create your account"
+      description="Start tracking income, spending, and balance."
+      align="center"
+      leading={<WelcomeIllustration className="size-28" />}
       trigger={
         <Button variant="secondary" className="mx-1">
           Sign up
@@ -32,6 +37,11 @@ export default function SignUpDialog() {
           className="grid gap-3"
           onSubmit={async (event) => {
             event.preventDefault();
+            if (password.length < 8) {
+              setPasswordTooShort(true);
+              return;
+            }
+            setPasswordTooShort(false);
             try {
               const { data } = await apiClient.post<AuthUser>("/auth/signup", {
                 email,
@@ -63,12 +73,17 @@ export default function SignUpDialog() {
             type="password"
             aria-label="Password"
             placeholder="Password"
-            autoComplete="current-password"
+            autoComplete="new-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            minLength={8}
+            aria-invalid={passwordTooShort || undefined}
             required
           />
+          {passwordTooShort ? (
+            <p role="alert" className="mx-2 text-xs text-destructive">
+              Password must container with at least 8 characters.
+            </p>
+          ) : null}
 
           {errorMessage ? (
             <p role="alert" className="text-sm text-destructive text-center">
@@ -76,7 +91,9 @@ export default function SignUpDialog() {
             </p>
           ) : null}
 
-          <Button type="submit">Sign up</Button>
+          <Button type="submit" variant="primary">
+            Create account
+          </Button>
         </form>
       )}
     </FormDialog>

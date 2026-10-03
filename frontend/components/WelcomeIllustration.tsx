@@ -1,9 +1,18 @@
 import { Plus, Wallet } from "lucide-react";
 
-export default function WelcomeIllustration() {
+import { cn } from "@/lib/utils";
+
+export default function WelcomeIllustration({
+  className,
+}: {
+  className?: string;
+}) {
   return (
     <div
-      className="relative flex size-36 items-center justify-center"
+      className={cn(
+        "relative flex size-36 items-center justify-center",
+        className,
+      )}
       aria-hidden="true"
     >
       <div className="absolute inset-0 rounded-full bg-sky-100 dark:bg-sky-950" />
