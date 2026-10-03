@@ -60,7 +60,7 @@ function CurrenciesSection() {
               </SelectContent>
             </Select>
           </div>
-          <CurrenciesList />
+          <CurrenciesList defaultCurrencyId={selectedId} />
         </>
       }
     />

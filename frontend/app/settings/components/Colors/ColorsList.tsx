@@ -1,12 +1,21 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
+import type { CSSProperties } from "react";
+
 import EditColorDialog from "./EditColorDialog";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import QueryState from "@/components/QueryState";
+import {
+  Card,
+  CardAction,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { colorsApi } from "@/lib/colorsApi";
 import { queryKeys } from "@/lib/queryKeys";
 import { useDeleteEntity } from "@/lib/useDeleteEntity";
-import { useQuery } from "@tanstack/react-query";
 
 export default function ColorsList() {
   const {
@@ -33,30 +42,42 @@ export default function ColorsList() {
       errorMessage="Failed to load colors."
       empty={<p className="text-sm text-muted-foreground">No colors yet.</p>}
     >
-      <div className="divide-y rounded-lg border mt-4">
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {(colors ?? []).map((color) => (
-          <div
+          <Card
             key={color.id}
-            className="flex items-center justify-between px-4 py-3"
+            className="gap-0 py-4 shadow-md ring-1 ring-border/60"
+            style={{ "--swatch": color.color } as CSSProperties}
           >
-            <div className="flex items-center gap-3">
-              <div
-                className="h-5 w-5 rounded-full border border-neutral-500"
-                style={{ backgroundColor: color.color }}
-              />
-              <span className="text-sm font-semibold">{color.name}</span>
-            </div>
-            <div className="flex items-center">
-              <EditColorDialog color={color} />
-              <ConfirmDeleteDialog
-                title="Delete color"
-                description="Are you sure you want to delete this color?"
-                ariaLabel="Delete color"
-                isPending={deleteMutation.isPending}
-                onConfirm={() => deleteMutation.mutate(color.id)}
-              />
-            </div>
-          </div>
+            <CardHeader className="items-center px-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--swatch)_18%,transparent)]"
+                >
+                  <span className="size-5 rounded-full bg-(--swatch) shadow-sm" />
+                </span>
+                <div className="min-w-0">
+                  <CardTitle className="truncate text-base tracking-tight">
+                    {color.name}
+                  </CardTitle>
+                  <CardDescription className="font-mono text-xs tracking-wide uppercase">
+                    {color.color}
+                  </CardDescription>
+                </div>
+              </div>
+              <CardAction className="flex">
+                <EditColorDialog color={color} />
+                <ConfirmDeleteDialog
+                  title="Delete color"
+                  description="Are you sure you want to delete this color?"
+                  ariaLabel="Delete color"
+                  isPending={deleteMutation.isPending}
+                  onConfirm={() => deleteMutation.mutate(color.id)}
+                />
+              </CardAction>
+            </CardHeader>
+          </Card>
         ))}
       </div>
     </QueryState>
