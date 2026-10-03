@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import EditCategoryDialog from "./EditCategoryDialog";
@@ -123,16 +123,25 @@ export default function CategoriesList() {
         const progress =
           budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
         const animatedProgress = showProgress ? progress : 0;
+        const symbol = currency?.symbol;
 
         return (
-          <Card key={category.id} className="gap-1">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <div
-                  className="h-5 w-5 shrink-0 rounded-full"
-                  style={{ backgroundColor: category.color }}
-                />
-                <CardTitle className="text-sm">{category.name}</CardTitle>
+          <Card
+            key={category.id}
+            className="gap-1"
+            style={{ "--category-color": category.color } as CSSProperties}
+          >
+            <CardHeader className="items-center">
+              <div className="flex min-w-0 items-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--category-color)_18%,transparent)]"
+                >
+                  <span className="size-3.5 rounded-full bg-(--category-color)" />
+                </span>
+                <CardTitle className="truncate text-base tracking-tight">
+                  {category.name}
+                </CardTitle>
               </div>
               <CardAction className="flex gap-1">
                 <EditCategoryDialog category={category} />
@@ -145,39 +154,45 @@ export default function CategoriesList() {
                 />
               </CardAction>
             </CardHeader>
-            <CardContent className="w-full space-y-2 mt-2">
+            <CardContent className="mt-3 w-full space-y-2.5">
               {category.monthlyBudget ? (
                 <>
                   <Progress
                     value={animatedProgress}
                     style={{ transitionDelay: `${index * 50}ms` }}
                     className={cn(
-                      "w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500 dark:bg-gray-700 dark:[&_[data-slot=progress-indicator]]:bg-gray-400",
-                      isOverBudget &&
-                        "bg-stone-200 [&_[data-slot=progress-indicator]]:bg-rose-800 dark:bg-rose-950 dark:[&_[data-slot=progress-indicator]]:bg-rose-400",
+                      "h-2.5",
+                      isOverBudget
+                        ? "bg-rose-100 [&_[data-slot=progress-indicator]]:bg-rose-600 dark:bg-rose-950 dark:[&_[data-slot=progress-indicator]]:bg-rose-400"
+                        : "bg-[color-mix(in_srgb,var(--category-color)_18%,transparent)] [&_[data-slot=progress-indicator]]:bg-(--category-color)",
                     )}
                   />
-                  <div className="flex w-full justify-between text-xs text-muted-foreground">
-                    <span
-                      className={cn(
-                        isOverBudget &&
-                          "font-medium text-rose-800 dark:text-rose-400",
-                      )}
-                    >{`${formatMoney(spent)} ${currency?.symbol} spent`}</span>
-                    <span>
-                      {`of ${formatMoney(budget)} ${currency?.symbol}`}
-                    </span>
+                  <div className="flex items-baseline justify-between gap-3 text-sm">
+                    <p>
+                      <span
+                        className={cn(
+                          "font-medium tabular-nums",
+                          isOverBudget && "text-rose-700 dark:text-rose-400",
+                        )}
+                      >
+                        {formatMoney(spent)}
+                        {symbol ? ` ${symbol}` : ""}
+                      </span>
+                      <span className="text-muted-foreground"> spent</span>
+                    </p>
+                    <p className="text-muted-foreground tabular-nums">
+                      of {formatMoney(budget)}
+                      {symbol ? ` ${symbol}` : ""}
+                    </p>
                   </div>
                 </>
               ) : (
                 <>
                   <Progress
                     value={0}
-                    className="w-full bg-gray-200 [&_[data-slot=progress-indicator]]:bg-gray-500 dark:bg-gray-700 dark:[&_[data-slot=progress-indicator]]:bg-gray-400"
+                    className="h-2.5 bg-[color-mix(in_srgb,var(--category-color)_18%,transparent)]"
                   />
-                  <div className="flex w-full justify-between text-xs text-muted-foreground">
-                    <span>Budget not set</span>
-                  </div>
+                  <p className="text-sm text-muted-foreground">Budget not set</p>
                 </>
               )}
             </CardContent>
