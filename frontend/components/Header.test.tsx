@@ -32,10 +32,7 @@ describe("Header", () => {
 
     expect(screen.getByRole("banner")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign in" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Sign up" })).toHaveAttribute(
-      "href",
-      "/sign-up",
-    );
+    expect(screen.getByRole("button", { name: "Sign up" })).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Toggle theme" }),
     ).not.toBeInTheDocument();

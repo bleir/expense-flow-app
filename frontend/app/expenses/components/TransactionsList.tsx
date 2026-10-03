@@ -1,8 +1,10 @@
 "use client";
 
 import QueryState from "@/components/QueryState";
+import WelcomeIllustration from "@/components/WelcomeIllustration";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -32,24 +34,31 @@ export default function TransactionsList({
       loadingMessage="Loading transactions..."
       errorMessage="Failed to load transactions."
       empty={
-        <Card className="border-dashed">
-          <CardHeader>
-            <CardTitle>No transactions yet</CardTitle>
-            <CardDescription>
-              Create your first transaction to get started.
-            </CardDescription>
-          </CardHeader>
+        <Card className="overflow-hidden border-dashed">
+          <CardContent className="flex flex-col items-center px-6 py-12 text-center">
+            <WelcomeIllustration />
+            <CardHeader className="items-center px-0">
+              <CardTitle className="text-2xl tracking-tight">
+                No transactions yet
+              </CardTitle>
+              <CardDescription className="max-w-md text-base leading-relaxed">
+                Create your first transaction to see income, spending, and
+                balance here.
+              </CardDescription>
+            </CardHeader>
+          </CardContent>
         </Card>
       }
     >
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {dashboardView && (
           <div className="flex items-center justify-between">
-            <h2>Lastest transaction</h2>
+            <h2 className="text-lg font-semibold tracking-tight">
+              Latest transactions
+            </h2>
             <Button
               asChild
-              variant="secondary"
-              className="hover:bg-sky-200 dark:hover:bg-sky-800"
+              variant="outline"
             >
               <Link href="/expenses">
                 See all

@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import {
   Accordion,
@@ -10,22 +11,44 @@ import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import TransactionData from "./TransactionData";
 import { formatDisplayDate } from "@/lib/dates";
 import { formatMoney } from "@/lib/money";
-import { transactionsApi } from "@/lib/transactionsApi";
+import {
+  transactionsApi,
+  type Transaction,
+  type TransactionCategory,
+  type TransactionType,
+} from "@/lib/transactionsApi";
 import { queryKeys } from "@/lib/queryKeys";
 import { useDeleteEntity } from "@/lib/useDeleteEntity";
-import { type TransactionType } from "@/lib/transactionsApi";
 import { BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
 
 const renderTransactionIcon = (transactionType: TransactionType) => {
   return transactionType === "income" ? (
-    <BanknoteArrowUp color="green" />
+    <BanknoteArrowUp className="text-emerald-600 dark:text-emerald-400" />
   ) : (
-    <BanknoteArrowDown color="red" />
+    <BanknoteArrowDown className="text-sky-700 dark:text-sky-300" />
   );
 };
 
-export default function TransactionItem({ transaction }: { transaction: any }) {
+function CategoryPill({ category }: { category?: TransactionCategory | null }) {
+  return (
+    <Badge variant="outline">
+      <span
+        className="size-2 shrink-0 rounded-full"
+        style={{
+          backgroundColor: category?.color ?? "hsl(var(--muted-foreground))",
+        }}
+      />
+      {category?.name ?? "—"}
+    </Badge>
+  );
+}
+
+export default function TransactionItem({
+  transaction,
+}: {
+  transaction: Transaction;
+}) {
   const { currency } = useDefaultCurrency();
   const currencySymbol = currency?.symbol ?? "$";
 
@@ -40,15 +63,21 @@ export default function TransactionItem({ transaction }: { transaction: any }) {
       <AccordionItem value={transaction.id}>
         <div className="flex items-center gap-2 px-6">
           <AccordionTrigger className="items-center hover:no-underline cursor-pointer">
-            <span className="flex flex-1 items-center gap-2">
-              {renderTransactionIcon(transaction.type)}
-              {transaction.description}
+            <span className="flex min-w-0 flex-1 flex-col gap-1 text-left">
+              <span className="flex items-center gap-2">
+                {renderTransactionIcon(transaction.type)}
+                <span className="truncate">{transaction.description}</span>
+              </span>
+              <span className="flex flex-wrap items-center gap-2 pl-8 text-sm text-muted-foreground">
+                <span>{formatDisplayDate(transaction.date)}</span>
+                <CategoryPill category={transaction.category} />
+              </span>
             </span>
             <span
               className={cn(
                 "text-base font-bold tabular-nums",
                 transaction.type === "income"
-                  ? "text-green-600 dark:text-green-400"
+                  ? "text-emerald-600 dark:text-emerald-400"
                   : "text-foreground",
               )}
             >
@@ -67,30 +96,12 @@ export default function TransactionItem({ transaction }: { transaction: any }) {
           </div>
         </div>
         <AccordionContent className="px-8">
-          <p className="inline-block text-base ml-4 mb-2 px-2 bg-white relative top-5">
+          <p className="relative top-3 ml-4 inline-block bg-card px-2 text-sm text-muted-foreground">
             Transaction details
           </p>
-          <div className="rounded-md border py-6 px-4 w-full bg-gray-50">
-            <TransactionData
-              label="Date"
-              data={formatDisplayDate(transaction.date)}
-            />
-            <TransactionData
-              label="Category"
-              data={
-                <div className="flex gap-2 items-center">
-                  <span
-                    className="w-5 h-5 rounded-full block"
-                    style={{
-                      backgroundColor: transaction?.category?.color,
-                    }}
-                  />
-                  {transaction.category?.name ?? "-"}
-                </div>
-              }
-            />
+          <div className="w-full rounded-md border bg-muted/40 px-4 py-6">
             <TransactionData label="Type" data={transaction.type} />
-            <TransactionData label="Notes" data={transaction.notes || "-"} />
+            <TransactionData label="Notes" data={transaction.notes || "—"} />
           </div>
         </AccordionContent>
       </AccordionItem>

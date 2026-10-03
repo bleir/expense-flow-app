@@ -1,32 +1,27 @@
 "use client";
 
 import Link from "next/link";
+import { redirect, usePathname } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
 } from "./ui/navigation-menu";
 import { useAuth } from "@/lib/auth";
-import { Button, buttonVariants } from "./ui/button";
-import { VariantProps } from "class-variance-authority";
+import { Button } from "./ui/button";
 import SignInDialog from "./SignInDialog";
-import { redirect } from "next/navigation";
 import SignUpDialog from "./SignUpDialog";
+import { cn } from "@/lib/utils";
 
-type NavItem = {
-  label: string;
-  href: string;
-  variant: NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
-};
-
-const navItemsLoggedInUser: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", variant: "ghost" },
-  { label: "Expenses", href: "/expenses", variant: "ghost" },
-  { label: "Categories", href: "/categories", variant: "ghost" },
-  { label: "Settings", href: "/settings", variant: "ghost" },
+const navItemsLoggedInUser = [
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Expenses", href: "/expenses" },
+  { label: "Categories", href: "/categories" },
+  { label: "Settings", href: "/settings" },
 ];
 
 export default function Menu() {
+  const pathname = usePathname();
   const { isLoggedIn, setUser } = useAuth();
 
   const handleLogout = () => {
@@ -39,15 +34,31 @@ export default function Menu() {
       <NavigationMenuList>
         {isLoggedIn ? (
           <>
-            {navItemsLoggedInUser.map((item) => (
-              <NavigationMenuItem key={item.href}>
-                <Button variant={item.variant} asChild className="mx-1">
-                  <Link href={item.href}>{item.label}</Link>
-                </Button>
-              </NavigationMenuItem>
-            ))}
+            {navItemsLoggedInUser.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                pathname.startsWith(`${item.href}/`) ||
+                (item.href === "/dashboard" && pathname === "/");
+
+              return (
+                <NavigationMenuItem key={item.href}>
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className={cn(
+                      isActive &&
+                        "bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground",
+                    )}
+                  >
+                    <Link href={item.href} aria-current={isActive ? "page" : undefined}>
+                      {item.label}
+                    </Link>
+                  </Button>
+                </NavigationMenuItem>
+              );
+            })}
             <NavigationMenuItem>
-              <Button variant="destructive" onClick={handleLogout}>
+              <Button variant="outline" className="ml-2" onClick={handleLogout}>
                 Logout
               </Button>
             </NavigationMenuItem>
