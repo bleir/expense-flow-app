@@ -95,13 +95,59 @@ export default function TransactionItem({
             />
           </div>
         </div>
-        <AccordionContent className="px-8">
-          <p className="relative top-3 ml-4 inline-block bg-card px-2 text-sm text-muted-foreground">
-            Transaction details
-          </p>
-          <div className="w-full rounded-md border bg-muted/40 px-4 py-6">
-            <TransactionData label="Type" data={transaction.type} />
-            <TransactionData label="Notes" data={transaction.notes || "—"} />
+        <AccordionContent className="px-6">
+          <div className="grid gap-4 rounded-lg bg-muted/40 p-4 ring-1 ring-border/60">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <TransactionData
+                label="Date"
+                data={formatDisplayDate(transaction.date)}
+              />
+              <TransactionData
+                label="Category"
+                data={<CategoryPill category={transaction.category} />}
+              />
+              <TransactionData
+                label="Type"
+                data={
+                  <span
+                    className={cn(
+                      "inline-flex rounded-full px-2 py-0.5 text-xs font-medium",
+                      transaction.type === "income"
+                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                        : "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300",
+                    )}
+                  >
+                    {transaction.type === "income" ? "Income" : "Expense"}
+                  </span>
+                }
+              />
+              <TransactionData
+                label="Amount"
+                data={
+                  <span
+                    className={cn(
+                      "tabular-nums",
+                      transaction.type === "income" &&
+                        "text-emerald-600 dark:text-emerald-400",
+                    )}
+                  >
+                    {formatMoney(transaction.amount)} {currencySymbol}
+                  </span>
+                }
+              />
+            </div>
+            <div className="border-t border-border/70 pt-3">
+              <TransactionData
+                label="Notes"
+                data={
+                  transaction.notes?.trim() || (
+                    <span className="font-normal text-muted-foreground">
+                      No notes for this transaction.
+                    </span>
+                  )
+                }
+              />
+            </div>
           </div>
         </AccordionContent>
       </AccordionItem>

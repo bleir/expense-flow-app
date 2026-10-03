@@ -1,13 +1,13 @@
-interface transactionDateProps {
+interface TransactionDataProps {
   label: string;
-  data: string | React.ReactNode;
+  data: React.ReactNode;
 }
 
-export default function TransactionData({ label, data }: transactionDateProps) {
+export default function TransactionData({ label, data }: TransactionDataProps) {
   return (
-    <div className="min-w-0 mt-4 px-2">
-      <p className="text-muted-foreground pb-1 text-sm">{label}</p>
-      <p className="text-base">{data}</p>
+    <div className="min-w-0">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <div className="mt-1 text-sm font-medium">{data}</div>
     </div>
   );
 }
