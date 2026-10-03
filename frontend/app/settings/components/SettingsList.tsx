@@ -23,6 +23,7 @@ import NewColorDialog from "./Colors/NewColorDialog";
 import CurrenciesList from "./Currencies/CurrenciesList";
 import NewCurrencyDialog from "./Currencies/NewCurrencyDialog";
 import SettingsItemWrapper from "./SettingsItemWrapper";
+import ThemeSettings from "./Theme/ThemeSettings";
 
 function CurrenciesSection() {
   const { currencyId, currencies, setDefaultCurrencyId } = useDefaultCurrency();
@@ -84,6 +85,14 @@ const sections = [
     ),
     description: (
       <CardDescription>Set up colors for your categories</CardDescription>
+    ),
+  },
+  {
+    name: "theme",
+    label: "Theme",
+    component: <ThemeSettings />,
+    description: (
+      <CardDescription>Choose a light or dark appearance</CardDescription>
     ),
   },
 ];

@@ -3,6 +3,7 @@
 import TransactionsList from "@/app/expenses/components/TransactionsList";
 import Heading from "@/components/Heading";
 import QueryState from "@/components/QueryState";
+import { Spinner } from "@/components/ui/spinner";
 import TransactionSummary from "@/components/TransactionSummary";
 import { useAuth } from "@/lib/auth";
 import { useTransactions } from "@/lib/useTransactions";
@@ -18,7 +19,14 @@ export default function DashboardView() {
   });
 
   if (!isReady) {
-    return <p className="text-muted-foreground">Loading dashboard...</p>;
+    return (
+      <div className="flex justify-center py-8">
+        <Spinner
+          className="size-6 text-muted-foreground"
+          aria-label="Loading dashboard"
+        />
+      </div>
+    );
   }
 
   if (!isLoggedIn) {

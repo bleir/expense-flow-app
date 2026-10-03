@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 type QueryStateProps = {
@@ -25,7 +26,12 @@ export default function QueryState({
 }: QueryStateProps) {
   if (isLoading) {
     return (
-      <p className={cn("text-muted-foreground", className)}>{loadingMessage}</p>
+      <div className={cn("flex justify-center py-8", className)}>
+        <Spinner
+          className="size-6 text-muted-foreground"
+          aria-label={loadingMessage}
+        />
+      </div>
     );
   }
 

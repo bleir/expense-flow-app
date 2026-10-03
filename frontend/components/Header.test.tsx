@@ -1,12 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { AuthProvider } from "@/lib/auth";
 import Header from "./Header";
-
-vi.mock("./ThemeToggle", () => ({
-  default: () => <button type="button" aria-label="Toggle theme" />,
-}));
 
 function renderHeader() {
   return render(
@@ -33,8 +29,6 @@ describe("Header", () => {
     expect(screen.getByRole("banner")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign in" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign up" })).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Toggle theme" }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("switch", { name: "Dark theme" })).not.toBeInTheDocument();
   });
 });

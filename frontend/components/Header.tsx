@@ -1,15 +1,9 @@
-"use client";
-
 import Link from "next/link";
 import { Wallet } from "lucide-react";
 
 import Menu from "@/components/Menu";
-import ThemeToggle from "@/components/ThemeToggle";
-import { useAuth } from "@/lib/auth";
 
 export default function Header() {
-  const { isLoggedIn } = useAuth();
-
   return (
     <header className="flex flex-row items-center justify-between border-b bg-card px-4 py-3">
       <Link href="/" className="flex items-center gap-2">
@@ -21,10 +15,7 @@ export default function Header() {
           <span className="font-bold text-sky-900 dark:text-sky-200">Flow</span>
         </span>
       </Link>
-      <div className="flex items-center gap-2">
-        <Menu />
-        {isLoggedIn && <ThemeToggle />}
-      </div>
+      <Menu />
     </header>
   );
 }
