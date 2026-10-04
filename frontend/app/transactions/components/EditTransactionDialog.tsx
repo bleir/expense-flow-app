@@ -2,7 +2,7 @@
 
 import { PencilIcon } from "lucide-react";
 
-import TransactionForm from "@/app/expenses/components/TransactionForm";
+import TransactionForm from "@/app/transactions/components/TransactionForm";
 import FormDialog from "@/components/FormDialog";
 import { Button } from "@/components/ui/button";
 import type { Transaction } from "@/lib/transactionsApi";

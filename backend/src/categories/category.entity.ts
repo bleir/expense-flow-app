@@ -1,5 +1,13 @@
 import type { Transaction } from '../transactions/transaction.entity.js';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from '../auth/user.entity.js';
 
 @Entity()
 export class Category {
@@ -17,4 +25,8 @@ export class Category {
 
   @OneToMany('Transaction', 'category')
   transactions!: Transaction[];
+
+  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 }

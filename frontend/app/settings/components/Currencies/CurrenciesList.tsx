@@ -13,8 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { currenciesApi } from "@/lib/currenciesApi";
-import { DEFAULT_CURRENCY_STORAGE_KEY } from "@/lib/defaultCurrency";
-import { queryKeys } from "@/lib/queryKeys";
+import { defaultCurrencyStorageKey } from "@/lib/defaultCurrency";
+import { useQueryKeys } from "@/lib/queryKeys";
 import { useDeleteEntity } from "@/lib/useDeleteEntity";
 
 export default function CurrenciesList({
@@ -22,6 +22,7 @@ export default function CurrenciesList({
 }: {
   defaultCurrencyId?: string;
 }) {
+  const queryKeys = useQueryKeys();
   const {
     data: currencies,
     isLoading,
@@ -29,6 +30,7 @@ export default function CurrenciesList({
   } = useQuery({
     queryKey: queryKeys.currencies,
     queryFn: currenciesApi.getAll,
+    enabled: Boolean(queryKeys.userId),
   });
 
   const deleteMutation = useDeleteEntity({
@@ -36,8 +38,10 @@ export default function CurrenciesList({
     deleteFn: currenciesApi.delete,
     entityName: "Currency",
     onDeleted: (id) => {
-      if (localStorage.getItem(DEFAULT_CURRENCY_STORAGE_KEY) === id) {
-        localStorage.removeItem(DEFAULT_CURRENCY_STORAGE_KEY);
+      if (!queryKeys.userId) return;
+      const key = defaultCurrencyStorageKey(queryKeys.userId);
+      if (localStorage.getItem(key) === id) {
+        localStorage.removeItem(key);
       }
     },
   });

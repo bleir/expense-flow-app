@@ -12,27 +12,41 @@ export class CurrenciesService {
     private readonly currenciesRepository: Repository<Currency>,
   ) {}
 
-  createCurrency(createCurrencyDto: CreateCurrencyDto) {
-    const currency = this.currenciesRepository.create(createCurrencyDto);
+  async createCurrency(createCurrencyDto: CreateCurrencyDto, userId: string) {
+    const currency = this.currenciesRepository.create({
+      ...createCurrencyDto,
+      user: { id: userId },
+    });
+    const saved = await this.currenciesRepository.save(currency);
+    const { user: _user, ...result } = saved;
 
-    return this.currenciesRepository.save(currency);
+    return result;
   }
 
-  getAllCurrencies() {
-    return this.currenciesRepository.find();
+  getAllCurrencies(userId: string) {
+    return this.currenciesRepository.find({
+      where: { user: { id: userId } },
+    });
   }
 
-  getCurrency(id: string) {
-    return this.currenciesRepository.findOneBy({ id });
-  }
-
-  async updateCurrency(id: string, updateCurrencyDto: UpdateCurrencyDto) {
-    const currency = await this.getCurrency(id);
+  async getCurrency(id: string, userId: string) {
+    const currency = await this.currenciesRepository.findOne({
+      where: { id, user: { id: userId } },
+    });
 
     if (!currency) {
       throw new NotFoundException('Currency not found');
     }
 
+    return currency;
+  }
+
+  async updateCurrency(
+    id: string,
+    updateCurrencyDto: UpdateCurrencyDto,
+    userId: string,
+  ) {
+    const currency = await this.getCurrency(id, userId);
     const updated = this.currenciesRepository.merge(
       currency,
       updateCurrencyDto,
@@ -41,12 +55,8 @@ export class CurrenciesService {
     return this.currenciesRepository.save(updated);
   }
 
-  async deleteCurrency(id: string) {
-    const currency = await this.getCurrency(id);
-
-    if (!currency) {
-      throw new NotFoundException('Currency not found');
-    }
+  async deleteCurrency(id: string, userId: string) {
+    const currency = await this.getCurrency(id, userId);
 
     return this.currenciesRepository.remove(currency);
   }

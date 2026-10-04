@@ -11,7 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import NewTransactionDialog from "@/app/expenses/components/NewTransactionDialog";
+import NewTransactionDialog from "@/app/transactions/components/NewTransactionDialog";
 import WelcomeIllustration from "@/components/WelcomeIllustration";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -63,7 +63,9 @@ function LeftGraphics() {
     >
       <SideCard
         className="absolute top-2 left-0 -rotate-12"
-        icon={<BanknoteArrowUp className="size-4 text-emerald-600 dark:text-emerald-400" />}
+        icon={
+          <BanknoteArrowUp className="size-4 text-emerald-600 dark:text-emerald-400" />
+        }
         label="Income"
         amount="+$1,240"
         tone="income"
@@ -86,7 +88,9 @@ function RightGraphics() {
     >
       <SideCard
         className="absolute top-4 right-0 rotate-12"
-        icon={<BanknoteArrowDown className="size-4 text-sky-600 dark:text-sky-300" />}
+        icon={
+          <BanknoteArrowDown className="size-4 text-sky-600 dark:text-sky-300" />
+        }
         label="Groceries"
         amount="-$86.40"
         tone="expense"

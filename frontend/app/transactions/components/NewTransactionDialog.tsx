@@ -3,7 +3,7 @@
 import { PlusIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-import TransactionForm from "@/app/expenses/components/TransactionForm";
+import TransactionForm from "@/app/transactions/components/TransactionForm";
 import FormDialog from "@/components/FormDialog";
 import { Button } from "@/components/ui/button";
 

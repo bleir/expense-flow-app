@@ -1,6 +1,6 @@
 "use client";
 
-import TransactionsList from "@/app/expenses/components/TransactionsList";
+import TransactionsList from "@/app/transactions/components/TransactionsList";
 import Heading from "@/components/Heading";
 import QueryState from "@/components/QueryState";
 import { Spinner } from "@/components/ui/spinner";
@@ -14,7 +14,11 @@ import WelcomeCard from "./WelcomeCard";
 
 export default function DashboardView() {
   const { isLoggedIn, isReady } = useAuth();
-  const { data: transactions, isPending, isError } = useTransactions({
+  const {
+    data: transactions,
+    isPending,
+    isError,
+  } = useTransactions({
     enabled: isReady && isLoggedIn,
   });
 

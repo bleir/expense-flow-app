@@ -21,7 +21,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { categoriesApi } from "@/lib/categoriesApi";
 import { toDateInputValue } from "@/lib/dates";
-import { queryKeys } from "@/lib/queryKeys";
+import { useQueryKeys } from "@/lib/queryKeys";
 import {
   transactionsApi,
   type CreateTransactionDto,
@@ -56,9 +56,11 @@ export default function TransactionForm({
   onSuccess,
 }: TransactionFormProps) {
   const isEditing = Boolean(transaction);
+  const queryKeys = useQueryKeys();
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
     queryKey: queryKeys.categories,
     queryFn: categoriesApi.getAll,
+    enabled: Boolean(queryKeys.userId),
   });
 
   return (

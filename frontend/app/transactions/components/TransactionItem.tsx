@@ -17,7 +17,7 @@ import {
   type TransactionCategory,
   type TransactionType,
 } from "@/lib/transactionsApi";
-import { queryKeys } from "@/lib/queryKeys";
+import { useQueryKeys } from "@/lib/queryKeys";
 import { useDeleteEntity } from "@/lib/useDeleteEntity";
 import { BanknoteArrowUp, BanknoteArrowDown } from "lucide-react";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
@@ -51,6 +51,7 @@ export default function TransactionItem({
 }) {
   const { currency } = useDefaultCurrency();
   const currencySymbol = currency?.symbol ?? "$";
+  const queryKeys = useQueryKeys();
 
   const deleteMutation = useDeleteEntity({
     queryKey: queryKeys.transactions,

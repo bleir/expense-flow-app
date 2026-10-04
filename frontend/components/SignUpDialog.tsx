@@ -11,7 +11,10 @@ import FormDialog from "./FormDialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
-type AuthUser = { id: string; email: string };
+type AuthResponse = {
+  accessToken: string;
+  user: { id: string; email: string };
+};
 
 export default function SignUpDialog() {
   const { setUser } = useAuth();
@@ -43,11 +46,15 @@ export default function SignUpDialog() {
             }
             setPasswordTooShort(false);
             try {
-              const { data } = await apiClient.post<AuthUser>("/auth/signup", {
+              const { data } = await apiClient.post<AuthResponse>("/auth/signup", {
                 email,
                 password,
               });
-              setUser({ id: data.id, email: data.email });
+              setUser({
+                id: data.user.id,
+                email: data.user.email,
+                accessToken: data.accessToken,
+              });
               toast.success("Account created");
               onSuccess();
               redirect("/dashboard");

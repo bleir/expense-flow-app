@@ -14,7 +14,7 @@ export default function ExpensesPage() {
   return (
     <Page>
       <section className="flex items-start justify-between gap-4">
-        <Heading title="Expenses">
+        <Heading title="Transactions">
           {isLoading
             ? "Your income and spending."
             : `${count} transaction${count === 1 ? "" : "s"}`}

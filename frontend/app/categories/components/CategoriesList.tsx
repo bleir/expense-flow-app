@@ -2,10 +2,12 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Tags } from "lucide-react";
 
 import EditCategoryDialog from "./EditCategoryDialog";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import QueryState from "@/components/QueryState";
+import WelcomeIllustration from "@/components/WelcomeIllustration";
 import {
   Card,
   CardAction,
@@ -19,7 +21,7 @@ import { categoriesApi } from "@/lib/categoriesApi";
 import { isInCurrentMonth } from "@/lib/dates";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
 import { formatMoney } from "@/lib/money";
-import { queryKeys } from "@/lib/queryKeys";
+import { useQueryKeys } from "@/lib/queryKeys";
 import { useDeleteEntity } from "@/lib/useDeleteEntity";
 import { useTransactions } from "@/lib/useTransactions";
 import { Transaction } from "@/lib/transactionsApi";
@@ -49,6 +51,7 @@ function getSpentByCategory(transactions: Transaction[] | undefined) {
 
 export default function CategoriesList() {
   const { currency } = useDefaultCurrency();
+  const queryKeys = useQueryKeys();
 
   const {
     data: categories,
@@ -57,6 +60,7 @@ export default function CategoriesList() {
   } = useQuery({
     queryKey: queryKeys.categories,
     queryFn: categoriesApi.getAll,
+    enabled: Boolean(queryKeys.userId),
   });
 
   const {
@@ -105,13 +109,19 @@ export default function CategoriesList() {
       loadingMessage="Loading categories..."
       errorMessage="Failed to load categories."
       empty={
-        <Card className="border-dashed">
-          <CardHeader>
-            <CardTitle>No categories yet</CardTitle>
-            <CardDescription>
-              Create your first category to get started.
-            </CardDescription>
-          </CardHeader>
+        <Card className="overflow-hidden border-dashed">
+          <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center">
+            <WelcomeIllustration icon={Tags} />
+            <CardHeader className="w-full max-w-md items-center px-0 text-center">
+              <CardTitle className="text-2xl leading-tight tracking-tight text-balance">
+                No categories yet
+              </CardTitle>
+              <CardDescription className="text-base leading-relaxed text-balance">
+                Create your first category to group spending and set a monthly
+                budget.
+              </CardDescription>
+            </CardHeader>
+          </CardContent>
         </Card>
       }
     >

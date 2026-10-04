@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { TransactionType } from './transaction.enum.js';
 import type { Category } from '../categories/category.entity.js';
+import { User } from '../auth/user.entity.js';
 
 @Entity()
 export class Transaction {
@@ -44,4 +45,8 @@ export class Transaction {
     name: 'updated_at',
   })
   updatedAt!: Date;
+
+  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 }

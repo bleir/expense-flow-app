@@ -2,7 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type AuthUser = { id: string; email: string };
+import { AUTH_STORAGE_KEY } from "@/lib/authStorage";
+
+type AuthUser = { id: string; email: string; accessToken: string };
 
 type AuthContextValue = {
   user: AuthUser | null;
@@ -11,7 +13,6 @@ type AuthContextValue = {
   setUser: (user: AuthUser | null) => void;
 };
 
-const STORAGE_KEY = "expense-flow-user";
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -19,15 +20,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
     if (raw) setUserState(JSON.parse(raw) as AuthUser);
     setIsReady(true);
   }, []);
 
   function setUser(next: AuthUser | null) {
     setUserState(next);
-    if (next) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    else localStorage.removeItem(STORAGE_KEY);
+    if (next) localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(next));
+    else localStorage.removeItem(AUTH_STORAGE_KEY);
   }
 
   return (

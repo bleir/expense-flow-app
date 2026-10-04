@@ -35,13 +35,13 @@ export default function TransactionsList({
       errorMessage="Failed to load transactions."
       empty={
         <Card className="overflow-hidden border-dashed">
-          <CardContent className="flex flex-col items-center px-6 py-12 text-center">
+          <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center">
             <WelcomeIllustration />
-            <CardHeader className="items-center px-0">
-              <CardTitle className="text-2xl tracking-tight">
+            <CardHeader className="w-full max-w-md items-center px-0 text-center">
+              <CardTitle className="text-2xl leading-tight tracking-tight text-balance">
                 No transactions yet
               </CardTitle>
-              <CardDescription className="max-w-md text-base leading-relaxed">
+              <CardDescription className="text-base leading-relaxed text-balance">
                 Create your first transaction to see income, spending, and
                 balance here.
               </CardDescription>

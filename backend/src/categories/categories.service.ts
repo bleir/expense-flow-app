@@ -12,29 +12,42 @@ export class CategoriesService {
     private readonly categoriesRepository: Repository<Category>,
   ) {}
 
-  createCategory(createCategoryDto: CreateCategoryDto) {
-    const category = this.categoriesRepository.create(createCategoryDto);
+  async createCategory(createCategoryDto: CreateCategoryDto, userId: string) {
+    const category = this.categoriesRepository.create({
+      ...createCategoryDto,
+      user: { id: userId },
+    });
+    const saved = await this.categoriesRepository.save(category);
+    const { user: _user, ...result } = saved;
 
-    return this.categoriesRepository.save(category);
+    return result;
   }
 
-  getCategories() {
+  getCategories(userId: string) {
     return this.categoriesRepository.find({
+      where: { user: { id: userId } },
       order: { name: 'ASC' },
     });
   }
 
-  getCategory(id: string) {
-    return this.categoriesRepository.findOneBy({ id });
-  }
-
-  async updateCategory(id: string, updateCategoryDto: UpdateCategoryDto) {
-    const category = await this.getCategory(id);
+  async getCategory(id: string, userId: string) {
+    const category = await this.categoriesRepository.findOne({
+      where: { id, user: { id: userId } },
+    });
 
     if (!category) {
       throw new NotFoundException('Category not found');
     }
 
+    return category;
+  }
+
+  async updateCategory(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+    userId: string,
+  ) {
+    const category = await this.getCategory(id, userId);
     const updated = this.categoriesRepository.merge(
       category,
       updateCategoryDto,
@@ -42,12 +55,8 @@ export class CategoriesService {
     return this.categoriesRepository.save(updated);
   }
 
-  async deleteCategory(id: string) {
-    const categoryToDelete = await this.getCategory(id);
-
-    if (!categoryToDelete) {
-      throw new NotFoundException('Category not found');
-    }
+  async deleteCategory(id: string, userId: string) {
+    const categoryToDelete = await this.getCategory(id, userId);
 
     return this.categoriesRepository.remove(categoryToDelete);
   }

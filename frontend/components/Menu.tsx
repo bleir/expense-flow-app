@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 const navItemsLoggedInUser = [
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Expenses", href: "/expenses" },
+  { label: "Transactions", href: "/transactions" },
   { label: "Categories", href: "/categories" },
   { label: "Settings", href: "/settings" },
 ];
@@ -50,7 +50,10 @@ export default function Menu() {
                         "bg-accent text-accent-foreground hover:bg-accent hover:text-accent-foreground",
                     )}
                   >
-                    <Link href={item.href} aria-current={isActive ? "page" : undefined}>
+                    <Link
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                    >
                       {item.label}
                     </Link>
                   </Button>

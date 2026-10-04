@@ -2,15 +2,20 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
+import { User } from '../auth/user.entity.js';
 
 @Entity()
+@Unique(['code', 'user'])
 export class Currency {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'varchar', unique: true, length: 3 })
+  @Column({ type: 'varchar', length: 3 })
   code!: string;
 
   @Column({ type: 'varchar', length: 50 })
@@ -24,4 +29,8 @@ export class Currency {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user!: User;
 }

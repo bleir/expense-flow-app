@@ -14,10 +14,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { colorsApi } from "@/lib/colorsApi";
-import { queryKeys } from "@/lib/queryKeys";
+import { useQueryKeys } from "@/lib/queryKeys";
 import { useDeleteEntity } from "@/lib/useDeleteEntity";
 
 export default function ColorsList() {
+  const queryKeys = useQueryKeys();
   const {
     data: colors,
     isLoading,
@@ -25,6 +26,7 @@ export default function ColorsList() {
   } = useQuery({
     queryKey: queryKeys.colors,
     queryFn: colorsApi.getAll,
+    enabled: Boolean(queryKeys.userId),
   });
 
   const deleteMutation = useDeleteEntity({

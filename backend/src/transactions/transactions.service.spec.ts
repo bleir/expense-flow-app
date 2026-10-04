@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TransactionsService } from './transactions.service.js';
 import { Transaction } from './transaction.entity.js';
+import { Category } from '../categories/category.entity.js';
 
 describe('TransactionsService', () => {
   let service: TransactionsService;
@@ -11,6 +12,7 @@ describe('TransactionsService', () => {
       providers: [
         TransactionsService,
         { provide: getRepositoryToken(Transaction), useValue: {} },
+        { provide: getRepositoryToken(Category), useValue: {} },
       ],
     }).compile();
 

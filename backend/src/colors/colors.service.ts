@@ -12,38 +12,48 @@ export class ColorsService {
     private readonly colorsRepository: Repository<Color>,
   ) {}
 
-  createColor(createColorDto: CreateColorDto) {
-    const color = this.colorsRepository.create(createColorDto);
+  async createColor(createColorDto: CreateColorDto, userId: string) {
+    const color = this.colorsRepository.create({
+      ...createColorDto,
+      user: { id: userId },
+    });
+    const saved = await this.colorsRepository.save(color);
+    const { user: _user, ...result } = saved;
 
-    return this.colorsRepository.save(color);
+    return result;
   }
 
-  getColors() {
-    return this.colorsRepository.find();
+  getColors(userId: string) {
+    return this.colorsRepository.find({
+      where: { user: { id: userId } },
+    });
   }
 
-  getColor(id: string) {
-    return this.colorsRepository.findOneBy({ id });
-  }
-
-  async updateColor(id: string, updateColorDto: UpdateColorDto) {
-    const color = await this.getColor(id);
+  async getColor(id: string, userId: string) {
+    const color = await this.colorsRepository.findOne({
+      where: { id, user: { id: userId } },
+    });
 
     if (!color) {
       throw new NotFoundException('Color not found');
     }
 
+    return color;
+  }
+
+  async updateColor(
+    id: string,
+    updateColorDto: UpdateColorDto,
+    userId: string,
+  ) {
+    const color = await this.getColor(id, userId);
     const updated = this.colorsRepository.merge(color, updateColorDto);
 
     return this.colorsRepository.save(updated);
   }
 
-  async deleteColor(id: string) {
-    const color = await this.getColor(id);
-
-    if (!color) {
-      throw new NotFoundException('Color not found.');
-    }
+  async deleteColor(id: string, userId: string) {
+    const color = await this.getColor(id, userId);
 
     return this.colorsRepository.remove(color);
   }

@@ -16,7 +16,7 @@ import {
   type CreateCurrencyDto,
   type Currency,
 } from "@/lib/currenciesApi";
-import { queryKeys } from "@/lib/queryKeys";
+import { useQueryKeys } from "@/lib/queryKeys";
 
 const currencyFormSchema = z.object({
   currency: z
@@ -46,6 +46,7 @@ export default function CurrencyForm({
   submitLabel,
 }: CurrencyFormProps) {
   const isEditing = Boolean(currency);
+  const queryKeys = useQueryKeys();
 
   return (
     <EntityForm<CurrencyFormValues>

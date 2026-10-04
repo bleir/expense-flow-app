@@ -1,6 +1,7 @@
 import axios, { type AxiosError } from "axios";
 
 import { API_URL } from "@/lib/apiBaseUrl";
+import { AUTH_STORAGE_KEY } from "@/lib/authStorage";
 
 type ApiErrorBody = {
   message?: string | string[];
@@ -30,6 +31,24 @@ function getApiErrorMessage(error: AxiosError<ApiErrorBody>) {
 
   return error.message || "Request failed";
 }
+
+apiClient.interceptors.request.use((config) => {
+  if (typeof window === "undefined") return config;
+
+  const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+  if (!raw) return config;
+
+  try {
+    const { accessToken } = JSON.parse(raw) as { accessToken?: string };
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+  } catch {
+    // A broken session blob stays anonymous instead of failing every request.
+  }
+
+  return config;
+});
 
 apiClient.interceptors.response.use(
   (response) => response,

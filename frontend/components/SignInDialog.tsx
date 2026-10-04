@@ -10,7 +10,10 @@ import FormDialog from "./FormDialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
-type AuthUser = { id: string; email: string };
+type AuthResponse = {
+  accessToken: string;
+  user: { id: string; email: string };
+};
 
 export default function SignInDialog() {
   const { setUser } = useAuth();
@@ -39,11 +42,15 @@ export default function SignInDialog() {
           onSubmit={async (event) => {
             event.preventDefault();
             try {
-              const { data } = await apiClient.post<AuthUser>("/auth/signin", {
+              const { data } = await apiClient.post<AuthResponse>("/auth/signin", {
                 email,
                 password,
               });
-              setUser({ id: data.id, email: data.email });
+              setUser({
+                id: data.user.id,
+                email: data.user.email,
+                accessToken: data.accessToken,
+              });
               toast.success("Signed in");
               onSuccess();
             } catch (error) {

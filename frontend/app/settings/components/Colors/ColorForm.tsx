@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { colorsApi, type CreateColorDto, type Color } from "@/lib/colorsApi";
-import { queryKeys } from "@/lib/queryKeys";
+import { useQueryKeys } from "@/lib/queryKeys";
 
 const DEFAULT_COLOR = "#808080";
 
@@ -37,6 +37,7 @@ export default function ColorForm({
   submitLabel,
 }: ColorFormProps) {
   const isEditing = Boolean(color);
+  const queryKeys = useQueryKeys();
 
   return (
     <EntityForm<ColorFormValues>
