@@ -5,7 +5,6 @@ import * as z from "zod";
 import EntityForm from "@/components/EntityForm";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,27 +12,20 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   categoriesApi,
   type Category,
   type CreateCategoryDto,
 } from "@/lib/categoriesApi";
-import { useQuery } from "@tanstack/react-query";
-import { colorsApi } from "@/lib/colorsApi";
 import { useQueryKeys } from "@/lib/queryKeys";
+
+const DEFAULT_COLOR = "#6b7280";
 
 const categoryFormSchema = z.object({
   name: z
     .string()
     .min(2, "Name must be at least 2 characters")
     .max(50, "Name must be less than 50 characters"),
-  color: z.string().min(1, "Please select a color"),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Pick a valid color"),
   monthlyBudget: z.string().optional(),
 });
 
@@ -42,7 +34,7 @@ type CategoryFormValues = z.infer<typeof categoryFormSchema>;
 type CategoryFormProps = {
   category?: Category;
   showHeader?: boolean;
-  onSuccess?: () => void;
+  onSuccess?: (category: Category) => void;
 };
 
 export default function CategoryForm({
@@ -53,23 +45,12 @@ export default function CategoryForm({
   const isEditing = Boolean(category);
   const queryKeys = useQueryKeys();
 
-  const {
-    data: colors,
-    isLoading,
-  } = useQuery({
-    queryFn: colorsApi.getAll,
-    queryKey: queryKeys.colors,
-    enabled: Boolean(queryKeys.userId),
-  });
-
-  const hasColors = Boolean(colors?.length);
-
   return (
     <EntityForm<CategoryFormValues>
       schema={categoryFormSchema}
       defaultValues={{
         name: category?.name ?? "",
-        color: category?.color ?? "",
+        color: category?.color || DEFAULT_COLOR,
         monthlyBudget: category?.monthlyBudget ?? "",
       }}
       mutationFn={(data: CreateCategoryDto) => {
@@ -96,12 +77,9 @@ export default function CategoryForm({
         create: "Add a new category for your expenses",
         edit: "Update this category name or color",
       }}
-      onSuccess={onSuccess}
+      onSuccess={(data) => onSuccess?.(data as Category)}
     >
-      {({ control, isPending }) => {
-        const isColorDisabled = isPending || isLoading || !hasColors;
-
-        return (
+      {({ control, isPending }) => (
         <>
           <FormField
             control={control}
@@ -127,39 +105,23 @@ export default function CategoryForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Color</FormLabel>
-                <div className="relative">
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || undefined}
-                    disabled={isColorDisabled}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a color" />
-                      </SelectTrigger>
-                    </FormControl>
-                    {hasColors && (
-                      <SelectContent position="popper" align="start">
-                        {colors?.map((color) => (
-                          <SelectItem key={color.id} value={color.color}>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="h-4 w-4 rounded-full border border-neutral-500"
-                                style={{ backgroundColor: color.color }}
-                              />
-                              {color.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    )}
-                  </Select>
-                </div>
-                {!isLoading && !hasColors && (
-                  <FormDescription className="text-orange-700">
-                    You need to create some colors first to choose it later here
-                  </FormDescription>
-                )}
+                <FormControl>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      className="h-9 w-12 cursor-pointer rounded-md border border-input bg-transparent p-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      value={field.value || DEFAULT_COLOR}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      disabled={isPending}
+                    />
+                    <span className="font-mono text-sm uppercase text-muted-foreground">
+                      {field.value || DEFAULT_COLOR}
+                    </span>
+                  </div>
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -179,8 +141,7 @@ export default function CategoryForm({
             )}
           />
         </>
-        );
-      }}
+      )}
     </EntityForm>
   );
 }

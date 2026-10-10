@@ -10,7 +10,6 @@ export function useQueryKeys() {
     userId,
     profile: ["profile", userId] as const,
     categories: ["categories", userId] as const,
-    colors: ["colors", userId] as const,
     currencies: ["currencies", userId] as const,
     transactions: ["transactions", userId] as const,
   };

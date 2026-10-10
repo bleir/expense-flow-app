@@ -1,8 +1,11 @@
 "use client";
 
+import { PlusIcon } from "lucide-react";
 import * as z from "zod";
 
+import NewCategoryDialog from "@/app/categories/components/NewCategoryDialog";
 import EntityForm from "@/components/EntityForm";
+import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -36,8 +39,8 @@ const transactionFormSchema = z.object({
   amount: z.string().min(1, "Amount is required"),
   description: z
     .string()
-    .min(2, "Description must be at least 2 characters")
-    .max(100, "Description must be less than 100 characters"),
+    .min(2, "Title must be at least 2 characters")
+    .max(100, "Title must be less than 100 characters"),
   date: z.string().min(1, "Date is required"),
   notes: z.string().optional().nullable(),
 });
@@ -97,6 +100,24 @@ export default function TransactionForm({
         <>
           <FormField
             control={control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="e.g., Groceries"
+                    {...field}
+                    disabled={isPending}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
             name="type"
             render={({ field }) => (
               <FormItem>
@@ -127,48 +148,48 @@ export default function TransactionForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value || undefined}
-                  disabled={isPending || isLoadingCategories}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categories?.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="h-4 w-4 rounded-full border border-neutral-500"
-                            style={{ backgroundColor: category.color }}
-                          />
-                          {category.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="e.g., Groceries"
-                    {...field}
-                    disabled={isPending}
+                <div className="flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || undefined}
+                      disabled={isPending || isLoadingCategories}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories?.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="h-4 w-4 rounded-full border border-neutral-500"
+                                style={{ backgroundColor: category.color }}
+                              />
+                              {category.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <NewCategoryDialog
+                    onCreated={(category) => field.onChange(category.id)}
+                    trigger={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        aria-label="Add category"
+                        disabled={isPending}
+                      >
+                        <PlusIcon />
+                      </Button>
+                    }
                   />
-                </FormControl>
+                </div>
                 <FormMessage />
               </FormItem>
             )}

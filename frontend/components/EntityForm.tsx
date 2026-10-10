@@ -31,7 +31,7 @@ type EntityFormProps<TValues extends FieldValues> = {
     create: string;
     edit: string;
   };
-  onSuccess?: () => void;
+  onSuccess?: (data: unknown) => void;
   submitLabel?: string;
   children: (helpers: {
     control: Control<TValues>;
@@ -62,12 +62,12 @@ export default function EntityForm<TValues extends FieldValues>({
 
   const mutation = useMutation({
     mutationFn,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey });
       if (!isEditing) {
         form.reset();
       }
-      onSuccess?.();
+      onSuccess?.(data);
       toast.success(
         `${entityName} has been ${isEditing ? "updated" : "created"}`,
       );

@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionsModule } from './transactions/transactions.module.js';
 import { CurrenciesModule } from './currencies/currencies.module.js';
-import { ColorsModule } from './colors/colors.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import pg from 'pg';
 
@@ -58,7 +57,6 @@ function postgresUrl(url: string): string {
     CategoriesModule,
     TransactionsModule,
     CurrenciesModule,
-    ColorsModule,
     AuthModule,
   ],
   controllers: [AppController],

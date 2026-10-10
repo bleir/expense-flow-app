@@ -13,8 +13,8 @@ The dashboard is the starting point. When you have no transactions yet, it shows
 ## What it does
 
 - **Expenses** — add, edit, and delete income or expense transactions, with amount, date, category, and notes
-- **Categories & budgets** — group spending and set a monthly budget per category
+- **Categories & budgets** — group spending, pick a color, and set a monthly budget per category
 - **Dashboard** — see the last 30 days of income and expenses on a chart, plus recent transactions
-- **Settings** — pick a currency, manage category colors, and switch light or dark theme
+- **Settings** — pick a currency and switch light or dark theme
 
 The app is a pnpm monorepo: a Next.js frontend in `frontend` and a NestJS API in `backend`.

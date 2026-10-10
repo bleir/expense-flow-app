@@ -18,8 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDefaultCurrency } from "@/lib/defaultCurrency";
-import ColorsList from "./Colors/ColorsList";
-import NewColorDialog from "./Colors/NewColorDialog";
 import CurrenciesList from "./Currencies/CurrenciesList";
 import NewCurrencyDialog from "./Currencies/NewCurrencyDialog";
 import SettingsItemWrapper from "./SettingsItemWrapper";
@@ -75,16 +73,6 @@ const sections = [
     component: <CurrenciesSection />,
     description: (
       <CardDescription>Set up your favourite currencies</CardDescription>
-    ),
-  },
-  {
-    name: "color",
-    label: "Color",
-    component: (
-      <SettingsItemWrapper list={<ColorsList />} modal={<NewColorDialog />} />
-    ),
-    description: (
-      <CardDescription>Set up colors for your categories</CardDescription>
     ),
   },
   {
