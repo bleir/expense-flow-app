@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto.js';
@@ -9,6 +10,7 @@ import { User } from './user.entity.js';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import type { ThemePreference } from './theme.js';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +33,7 @@ export class AuthService {
     const user = this.usersRepository.create({
       email: createUserDto.email,
       password,
+      theme: 'light',
     });
     const saved = await this.usersRepository.save(user);
 
@@ -51,6 +54,23 @@ export class AuthService {
     }
 
     return this.issueSession(user);
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.usersRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    return { id: user.id, email: user.email, theme: user.theme };
+  }
+
+  async updateTheme(userId: string, theme: ThemePreference) {
+    const profile = await this.getProfile(userId);
+    await this.usersRepository.update({ id: userId }, { theme });
+
+    return { ...profile, theme };
   }
 
   private async issueSession(user: User) {

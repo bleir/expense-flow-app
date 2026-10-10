@@ -1,21 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { toast } from "sonner";
 
 import { Switch } from "@/components/ui/switch";
+import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 export default function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const isDark = mounted && resolvedTheme === "dark";
+  const { resolvedTheme, setTheme, isReady } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   return (
     <div className="flex items-center gap-1.5">
@@ -28,8 +22,14 @@ export default function ThemeToggle() {
       />
       <Switch
         checked={isDark}
-        disabled={!mounted}
-        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+        disabled={!isReady}
+        onCheckedChange={(checked) => {
+          void setTheme(checked ? "dark" : "light").catch((error: unknown) => {
+            toast.error(
+              error instanceof Error ? error.message : "Could not save theme",
+            );
+          });
+        }}
         aria-label="Dark theme"
       />
       <Moon

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
+import { UsersController } from './users.controller.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity.js';
 import { JwtModule } from '@nestjs/jwt';
@@ -27,7 +28,7 @@ import { JwtAuthGuard } from './jwt-auth.guard.js';
       },
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, UsersController],
   providers: [
     AuthService,
     JwtStrategy,

@@ -4,6 +4,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import type { ThemePreference } from './theme.js';
 
 @Entity()
 export class User {
@@ -15,6 +16,9 @@ export class User {
 
   @Column()
   password!: string;
+
+  @Column({ type: 'varchar', default: 'light' })
+  theme!: ThemePreference;
 
   @CreateDateColumn()
   createdAt!: Date;
